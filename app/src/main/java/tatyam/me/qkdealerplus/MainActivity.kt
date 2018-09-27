@@ -134,6 +134,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun pressSetting(view: View) = startActivity(Intent(this, SettingsActivity::class.java))
+
     private fun press(string: String) {
         if (judged) {
             judged = false
