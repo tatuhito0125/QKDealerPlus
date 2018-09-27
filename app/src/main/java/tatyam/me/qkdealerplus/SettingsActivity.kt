@@ -65,6 +65,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 || GeneralPreferenceFragment::class.java.name == fragmentName
                 || DataSyncPreferenceFragment::class.java.name == fragmentName
                 || NotificationPreferenceFragment::class.java.name == fragmentName
+                || TimerPreferenceFragment::class.java.name == fragmentName
     }
 
     /**
