@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="timerMode">
+    <item>なし</item>
+    <item>1手時間</item>
+    <item>1手時間→持ち時間</item>
+    <item>持ち時間→1手時間</item>
+    </string-array>
+    <string-array name="timerModeValue">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+</resources>

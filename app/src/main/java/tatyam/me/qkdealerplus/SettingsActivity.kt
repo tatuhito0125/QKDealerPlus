@@ -8,12 +8,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.preference.ListPreference
-import android.preference.Preference
-import android.preference.PreferenceActivity
-import android.preference.PreferenceFragment
-import android.preference.PreferenceManager
-import android.preference.RingtonePreference
+import android.preference.*
 import android.text.TextUtils
 import android.view.MenuItem
 
@@ -159,6 +154,31 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             super.onCreate(savedInstanceState)
             addPreferencesFromResource(R.xml.pref_timer)
             setHasOptionsMenu(true)
+            val setMoveTime = findPreference("setMoveTime") as EditTextPreference
+            val setPlayerTime = findPreference("setPlayerTime") as EditTextPreference
+            val setThinkingTime = findPreference("setThinkingTime") as EditTextPreference
+            setMoveTime.summary = setMoveTime.text + "秒"
+            setPlayerTime.summary = setPlayerTime.text + "秒"
+            setThinkingTime.summary = setThinkingTime.text + "秒"
+
+            setMoveTime.setOnPreferenceChangeListener { preference, newValue ->
+                if(newValue == "0") false else {
+                    preference.summary = newValue.toString() + "秒"
+                    true
+                }
+            }
+
+            setPlayerTime.setOnPreferenceChangeListener { preference, newValue ->
+                if(newValue == "0") false else {
+                    preference.summary = newValue.toString() + "秒"
+                    true
+                }
+            }
+
+            setThinkingTime.setOnPreferenceChangeListener { preference, newValue ->
+                preference.summary = newValue.toString() + "秒"
+                true
+            }
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
