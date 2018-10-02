@@ -20,6 +20,7 @@
         android:title="1手時間" />
     <EditTextPreference
         android:defaultValue="60"
+        android:inputType="number"
         android:key="setPlayerTime"
         android:maxLength="4"
         android:selectAllOnFocus="true"
@@ -28,9 +29,22 @@
         android:title="持ち時間" />
     <EditTextPreference
         android:defaultValue="60"
+        android:inputType="number"
         android:key="setThinkingTime"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:summary="60秒"
         android:title="思考時間" />
+    <ListPreference
+        android:defaultValue="2"
+        android:entries="@array/playersNumber"
+        android:entryValues="@array/playersNumberValue"
+        android:key="setPlayersNumber"
+        android:summary="%s"
+        android:title="人数" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="setVibration"
+        android:summary="残り時間が少なくなると振動します"
+        android:title="バイブレーション" />
 </PreferenceScreen>

@@ -4,12 +4,9 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.preference.*
-import android.text.TextUtils
 import android.view.MenuItem
 
 /**
@@ -57,95 +54,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
      */
     override fun isValidFragment(fragmentName: String): Boolean {
         return PreferenceFragment::class.java.name == fragmentName
-                || GeneralPreferenceFragment::class.java.name == fragmentName
-                || DataSyncPreferenceFragment::class.java.name == fragmentName
-                || NotificationPreferenceFragment::class.java.name == fragmentName
                 || TimerPreferenceFragment::class.java.name == fragmentName
-    }
-
-    /**
-     * This fragment shows general preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    class GeneralPreferenceFragment : PreferenceFragment() {
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            addPreferencesFromResource(R.xml.pref_general)
-            setHasOptionsMenu(true)
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("example_text"))
-            bindPreferenceSummaryToValue(findPreference("example_list"))
-        }
-
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            val id = item.itemId
-            if (id == android.R.id.home) {
-                startActivity(Intent(activity, SettingsActivity::class.java))
-                return true
-            }
-            return super.onOptionsItemSelected(item)
-        }
-    }
-
-    /**
-     * This fragment shows notification preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    class NotificationPreferenceFragment : PreferenceFragment() {
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            addPreferencesFromResource(R.xml.pref_notification)
-            setHasOptionsMenu(true)
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"))
-        }
-
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            val id = item.itemId
-            if (id == android.R.id.home) {
-                startActivity(Intent(activity, SettingsActivity::class.java))
-                return true
-            }
-            return super.onOptionsItemSelected(item)
-        }
-    }
-
-    /**
-     * This fragment shows data and sync preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    class DataSyncPreferenceFragment : PreferenceFragment() {
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            addPreferencesFromResource(R.xml.pref_data_sync)
-            setHasOptionsMenu(true)
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("sync_frequency"))
-        }
-
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            val id = item.itemId
-            if (id == android.R.id.home) {
-                startActivity(Intent(activity, SettingsActivity::class.java))
-                return true
-            }
-            return super.onOptionsItemSelected(item)
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -154,22 +63,40 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             super.onCreate(savedInstanceState)
             addPreferencesFromResource(R.xml.pref_timer)
             setHasOptionsMenu(true)
+            val setTimerMode = findPreference("setTimerMode") as ListPreference
             val setMoveTime = findPreference("setMoveTime") as EditTextPreference
             val setPlayerTime = findPreference("setPlayerTime") as EditTextPreference
             val setThinkingTime = findPreference("setThinkingTime") as EditTextPreference
+            val setPlayersNumber = findPreference("setPlayersNumber") as ListPreference
+            val setVibration = findPreference("setVibration") as SwitchPreference
             setMoveTime.summary = setMoveTime.text + "秒"
             setPlayerTime.summary = setPlayerTime.text + "秒"
             setThinkingTime.summary = setThinkingTime.text + "秒"
 
+            setMoveTime.isEnabled = setTimerMode.value.toInt() > 0
+            setPlayerTime.isEnabled = setTimerMode.value.toInt() > 1
+            setThinkingTime.isEnabled = setTimerMode.value.toInt() > 0
+            setPlayersNumber.isEnabled = setTimerMode.value.toInt() > 1
+            setVibration.isEnabled = setTimerMode.value.toInt() > 0
+            
+            setTimerMode.setOnPreferenceChangeListener { _, newValue ->
+                setMoveTime.isEnabled = newValue.toString().toInt() > 0
+                setPlayerTime.isEnabled = newValue.toString().toInt() > 1
+                setThinkingTime.isEnabled = newValue.toString().toInt() > 0
+                setPlayersNumber.isEnabled = newValue.toString().toInt() > 1
+                setVibration.isEnabled = newValue.toString().toInt() > 0
+                true
+            }
+
             setMoveTime.setOnPreferenceChangeListener { preference, newValue ->
-                if(newValue == "0") false else {
+                if (newValue == "0") false else {
                     preference.summary = newValue.toString() + "秒"
                     true
                 }
             }
 
             setPlayerTime.setOnPreferenceChangeListener { preference, newValue ->
-                if(newValue == "0") false else {
+                if (newValue == "0") false else {
                     preference.summary = newValue.toString() + "秒"
                     true
                 }
@@ -203,37 +130,14 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             if (preference is ListPreference) {
                 // For list preferences, look up the correct display value in
                 // the preference's 'entries' list.
-                val listPreference = preference
-                val index = listPreference.findIndexOfValue(stringValue)
+                val index = preference.findIndexOfValue(stringValue)
 
                 // Set the summary to reflect the new value.
                 preference.setSummary(
                         if (index >= 0)
-                            listPreference.entries[index]
+                            preference.entries[index]
                         else
                             null)
-
-            } else if (preference is RingtonePreference) {
-                // For ringtone preferences, look up the correct display value
-                // using RingtoneManager.
-                if (TextUtils.isEmpty(stringValue)) {
-                    // Empty values correspond to 'silent' (no ringtone).
-                    preference.setSummary(R.string.pref_ringtone_silent)
-
-                } else {
-                    val ringtone = RingtoneManager.getRingtone(
-                            preference.getContext(), Uri.parse(stringValue))
-
-                    if (ringtone == null) {
-                        // Clear the summary if there was a lookup error.
-                        preference.setSummary(null)
-                    } else {
-                        // Set the summary to reflect the new ringtone display
-                        // name.
-                        val name = ringtone.getTitle(preference.getContext())
-                        preference.setSummary(name)
-                    }
-                }
 
             } else {
                 // For all other preferences, set the summary to the value's
@@ -251,25 +155,5 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             return context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE
         }
 
-        /**
-         * Binds a preference's summary to its value. More specifically, when the
-         * preference's value is changed, its summary (line of text below the
-         * preference title) is updated to reflect the value. The summary is also
-         * immediately updated upon calling this method. The exact display format is
-         * dependent on the type of preference.
-
-         * @see .sBindPreferenceSummaryToValueListener
-         */
-        private fun bindPreferenceSummaryToValue(preference: Preference) {
-            // Set the listener to watch for value changes.
-            preference.onPreferenceChangeListener = sBindPreferenceSummaryToValueListener
-
-            // Trigger the listener immediately with the preference's
-            // current value.
-            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(preference.context)
-                            .getString(preference.key, ""))
-        }
     }
 }

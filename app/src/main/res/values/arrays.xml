@@ -12,4 +12,20 @@
         <item>2</item>
         <item>3</item>
     </string-array>
+    <string-array name="playersNumber">
+        <item>2人</item>
+        <item>3人</item>
+        <item>4人</item>
+        <item>5人</item>
+        <item>6人</item>
+        <item>7人</item>
+    </string-array>
+    <string-array name="playersNumberValue">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
 </resources>
