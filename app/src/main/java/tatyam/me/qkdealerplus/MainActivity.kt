@@ -12,8 +12,7 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 import android.content.Intent
-
-
+import android.preference.PreferenceManager
 
 
 class MainActivity : AppCompatActivity() {
@@ -89,52 +88,72 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.button1).setOnLongClickListener {
-            if (mode > 0) return@setOnLongClickListener false
-            if (inputFormat < 1) press("1")
+            if (mode > 0) false
             else {
-                press("A")
+                if (inputFormat < 1) press("1")
+                else {
+                    press("A")
+                }
+                true
             }
-            true
         }
 
         findViewById<Button>(R.id.button10).setOnLongClickListener {
-            if (mode > 0) return@setOnLongClickListener false
-            if (inputFormat < 2) press("10")
+            if (mode > 0) false
             else {
-                press("T")
+                if (inputFormat < 2) press("10")
+                else {
+                    press("T")
+                }
+                true
             }
-            true
         }
 
         findViewById<Button>(R.id.button11).setOnLongClickListener {
-            if (mode > 0) return@setOnLongClickListener false
-            if (inputFormat < 3) press("11")
+            if (mode > 0) false
             else {
-                press("J")
+                if (inputFormat < 3) press("11")
+                else {
+                    press("J")
+                }
+                true
             }
-            true
         }
 
         findViewById<Button>(R.id.button12).setOnLongClickListener {
-            if (mode > 0) return@setOnLongClickListener false
-            if (inputFormat < 3) press("12")
+            if (mode > 0) false
             else {
-                press("Q")
+                if (inputFormat < 3) press("12")
+                else {
+                    press("Q")
+                }
+                true
             }
-            true
         }
 
         findViewById<Button>(R.id.button13).setOnLongClickListener {
-            if (mode > 0) return@setOnLongClickListener false
-            if (inputFormat < 3) press("13")
+            if (mode > 0) false
             else {
-                press("K")
+                if (inputFormat < 3) press("13")
+                else {
+                    press("K")
+                }
+                true
             }
-            true
         }
     }
 
     fun pressSetting(view: View) = startActivity(Intent(this, SettingsActivity::class.java))
+
+    fun pressTimer(view: View) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val timerMode = sharedPreferences.getInt("setTimerMode", 0)
+        if (timerMode == 0) {
+            startActivity(Intent(this, SettingsActivity::class.java))
+            return
+        }
+//Thinking Timeをどうするか
+    }
 
     private fun press(string: String) {
         if (judged) {
