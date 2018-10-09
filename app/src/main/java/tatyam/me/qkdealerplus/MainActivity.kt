@@ -455,7 +455,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             for (i in multiSign.size - 1 downTo 2) if (!multiSign[i]) {
-                if (log10(factorList[i - 1].toBigDecimal(), 10) * factorList[i].toBigDecimal() > 200.toBigDecimal()) {
+                if (log10(factorList[i - 1]) * factorList[i].toDouble() > 400) {
                     printResult(string, "は正しくないです")
                     resultText.text = "等式が成立していません"
                     return
@@ -475,7 +475,7 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             for (i in multiSign.size - 1 downTo 1) if (!multiSign[i]) {
-                if (log10(factorList[i - 1].toBigDecimal(), 10) * factorList[i].toBigDecimal() > 100.toBigDecimal()) {
+                if (log10(factorList[i - 1]) * factorList[i].toDouble() > 100) {
                     printResult(string, "= TOO BIG")
                     return
                 }
@@ -575,7 +575,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun isPrimeB(bigint: BigInteger): Boolean {
         if (bigint < 2.toBigInteger()) return false
-        val primes = listOf(2, 3, 5, 7, 11, 13, 17, 19, 23)
+        val primes = listOf(2, 3, 5, 7, 11, 13, 17, 19)
         for (i in primes) {
             if (bigint < (i * i).toBigInteger()) return true
             if (bigint % i.toBigInteger() == 0.toBigInteger()) return false
@@ -583,31 +583,15 @@ class MainActivity : AppCompatActivity() {
         return bigint.isProbablePrime(200)
     }
 
-    private fun log10(b: BigDecimal, dp: Int): BigDecimal {
-        if (b == 0.toBigDecimal()) return 0.toBigDecimal()
-        var b = b
-        val NUM_OF_DIGITS = dp + 2
-        val mc = MathContext(NUM_OF_DIGITS, RoundingMode.HALF_EVEN)
-        when {
-            b.signum() <= 0 -> throw ArithmeticException("log of a negative number! (or zero)")
-            b == 1.toBigDecimal() -> return 0.toBigDecimal()
-            b < 1.toBigDecimal() -> return log10(1.toBigDecimal().divide(b, mc), dp).negate()
-            else -> {
-                val sb = StringBuffer()
-                var leftDigits = b.precision() - b.scale()
-                sb.append(leftDigits - 1).append("")
-                var n = 0
-                while (n < NUM_OF_DIGITS) {
-                    b = b.movePointLeft(leftDigits - 1).pow(10, mc)
-                    leftDigits = b.precision() - b.scale()
-                    sb.append(leftDigits - 1)
-                    n++
-                }
-                var ans = BigDecimal(sb.toString())
-                ans = ans.round(MathContext(ans.precision() - ans.scale() + dp, RoundingMode.HALF_EVEN))
-                return ans
-            }
+    private fun log10(b: BigInteger): Double {
+        if (b == 0.toBigInteger()) return 0.0
+        var a = b.toBigDecimal()
+        var cnt = 0
+        while (a >= 10.toBigDecimal()) {
+            a /= 10.toBigDecimal()
+            cnt++
         }
+        return kotlin.math.log10(a.toDouble()) + cnt
     }
 
     private fun ATJQKX(char: Char): Int = when (char) {
