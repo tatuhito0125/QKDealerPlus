@@ -47,4 +47,8 @@
         android:key="setVibration"
         android:summary="残り時間が少なくなると振動します"
         android:title="バイブレーション" />
+    <Preference
+        android:key="startTimer"
+        android:title="スタート"
+        android:widgetLayout="@layout/button_start" />
 </PreferenceScreen>

@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.preference.*
 import android.view.MenuItem
+import android.view.View
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -24,6 +25,19 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupActionBar()
+    }
+    fun startTimer(view: View){
+        val intent = Intent(this, TimerActivity::class.java)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        intent.putExtra("timerMode",sharedPreferences.getInt("setTimerMode",1))
+        intent.putExtra("moveTime",sharedPreferences.getInt("setMoveTime",60))
+        intent.putExtra("playerTime",sharedPreferences.getInt("setPlayerTime",60))
+        intent.putExtra("thinkingTime",sharedPreferences.getInt("setThinkingTime",60))
+        intent.putExtra("playersNumber",sharedPreferences.getInt("setPlayersNumber",2))
+        intent.putExtra("vibration",sharedPreferences.getBoolean("setVibration",true))
+        intent.putExtra("startThinkingTime",sharedPreferences.getInt("setThinkingTime",60) != 0)
+        startActivity(intent)
+        finish()
     }
 
     /**
@@ -69,6 +83,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             val setThinkingTime = findPreference("setThinkingTime") as EditTextPreference
             val setPlayersNumber = findPreference("setPlayersNumber") as ListPreference
             val setVibration = findPreference("setVibration") as SwitchPreference
+            val startTimer = findPreference("startTimer")
             setMoveTime.summary = setMoveTime.text + "秒"
             setPlayerTime.summary = setPlayerTime.text + "秒"
             setThinkingTime.summary = setThinkingTime.text + "秒"
@@ -78,6 +93,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             setThinkingTime.isEnabled = setTimerMode.value.toInt() > 0
             setPlayersNumber.isEnabled = setTimerMode.value.toInt() > 1
             setVibration.isEnabled = setTimerMode.value.toInt() > 0
+            startTimer.isEnabled = setTimerMode.value.toInt() > 0
             
             setTimerMode.setOnPreferenceChangeListener { _, newValue ->
                 setMoveTime.isEnabled = newValue.toString().toInt() > 0
@@ -85,6 +101,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 setThinkingTime.isEnabled = newValue.toString().toInt() > 0
                 setPlayersNumber.isEnabled = newValue.toString().toInt() > 1
                 setVibration.isEnabled = newValue.toString().toInt() > 0
+                startTimer.isEnabled = newValue.toString().toInt() > 0
                 true
             }
 

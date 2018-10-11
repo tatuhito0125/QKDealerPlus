@@ -8,9 +8,6 @@ import android.widget.Button
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigInteger
-import java.math.BigDecimal
-import java.math.MathContext
-import java.math.RoundingMode
 import android.content.Intent
 import android.preference.PreferenceManager
 
@@ -40,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.buttonJudge).setOnLongClickListener {
             if ("[×=^]".toRegex() in number || numberOfX > 1) return@setOnLongClickListener false
+            judged = true
             val cards = mutableListOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
             for (char in number) cards[ATJQKX(char)]++
             var searchResult = 0.toBigInteger()
@@ -152,7 +150,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, SettingsActivity::class.java))
             return
         }
-//Thinking Timeをどうするか
     }
 
     private fun press(string: String) {
@@ -437,7 +434,7 @@ class MainActivity : AppCompatActivity() {
                 if (multiSign[i]) {
                     if (!isPrimeB(factorList[i])) {
                         printResult(string, "は正しくないです")
-                        val result = factorList[i].toString() + " は素数ではありません"
+                        val result = factorList[i].toString() + " は素因数ではありません"
                         resultText.text = result
                         return
                     }
