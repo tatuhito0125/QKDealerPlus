@@ -348,6 +348,7 @@
         android:layout_width="52dp"
         android:layout_height="52dp"
         android:background="@drawable/border"
+        android:onClick="pressTimer"
         android:text="⏰"
         android:textColor="#b50"
         android:textSize="20sp"

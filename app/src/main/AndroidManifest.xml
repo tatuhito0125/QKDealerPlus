@@ -24,10 +24,12 @@
             android:label="Settings"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme_ActionBar" />
-        <activity android:name=".TimerActivity"
+        <activity
+            android:name=".TimerActivity"
+            android:parentActivityName=".MainActivity"
+            android:label="Timer"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:theme="@style/AppTheme_ActionBar"/>
     </application>
 
 </manifest>
