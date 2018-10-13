@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     private var numberOfX = 0
     private var judged = true
     private var maxFactorX = 2
-    private var player = 0
     var number = "0"
     private val resetText = arrayOf("Press \"●\" to Judge")
 
@@ -145,16 +144,25 @@ class MainActivity : AppCompatActivity() {
     fun pressSetting(view: View) = startActivity(Intent(this, SettingsActivity::class.java))
 
     fun pressTimer(view: View){
-        val intent = Intent(this, TimerActivity::class.java)
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        intent.putExtra("timerMode",sharedPreferences.getString("setTimerMode","1").toInt())
-        intent.putExtra("moveTime",sharedPreferences.getString("setMoveTime","60").toInt())
-        intent.putExtra("playerTime",sharedPreferences.getString("setPlayerTime","60").toInt())
-        intent.putExtra("thinkingTime",sharedPreferences.getString("setThinkingTime","60").toInt())
-        intent.putExtra("playersNumber",sharedPreferences.getString("setPlayersNumber","2").toInt())
-        intent.putExtra("player", player)
-        intent.putExtra("vibration",sharedPreferences.getBoolean("setVibration",true))
-        startActivity(intent)
+        val editor = sharedPreferences.edit()
+        if (sharedPreferences.getBoolean("startThinkingTime", false)) {
+            editor.putBoolean("startThinkingTime", false)
+        }
+        else {
+            editor.putInt("player", (sharedPreferences.getInt("player", 0) + 1) % sharedPreferences.getString("playersNumber", "2").toInt())
+        }
+        editor.apply()
+        startActivity(Intent(this, TimerActivity::class.java))
+    }
+
+    fun pressPass(view: View) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val editor = sharedPreferences.edit()
+        editor.putInt("player", (sharedPreferences.getInt("player", 0) + 1) % sharedPreferences.getString("playersNumber", "2").toInt())
+        editor.apply()
+        val string = "プレイヤー${sharedPreferences.getInt("player", 0) + 1} の手番です"
+        resultText.text = string
     }
 
     private fun press(string: String) {

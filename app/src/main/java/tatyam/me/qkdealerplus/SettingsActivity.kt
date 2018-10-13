@@ -11,14 +11,14 @@ import android.view.MenuItem
 import android.view.View
 
 /**
- * A [PreferenceActivity] that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
+ * A [PreferenceActivity] that presents a set of application tings. On
+ * handset devices, tings are presented as a single list. On tablets,
+ * tings are split by category, with category headers shown to the left of
+ * the list of tings.
  *
- * See [Android Design: Settings](http://developer.android.com/design/patterns/settings.html)
- * for design guidelines and the [Settings API Guide](http://developer.android.com/guide/topics/ui/settings.html)
- * for more information on developing a Settings UI.
+ * See [Android Design: tings](http://developer.android.com/design/patterns/tings.html)
+ * for design guidelines and the [tings API Guide](http://developer.android.com/guide/topics/ui/tings.html)
+ * for more information on developing a tings UI.
  */
 class SettingsActivity : AppCompatPreferenceActivity() {
 
@@ -28,14 +28,12 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     }
     fun startTimer(view: View){
         val intent = Intent(this, TimerActivity::class.java)
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        intent.putExtra("timerMode",sharedPreferences.getString("setTimerMode","1").toInt())
-        intent.putExtra("moveTime",sharedPreferences.getString("setMoveTime","60").toInt())
-        intent.putExtra("playerTime",sharedPreferences.getString("setPlayerTime","60").toInt())
-        intent.putExtra("thinkingTime",sharedPreferences.getString("setThinkingTime","60").toInt())
-        intent.putExtra("playersNumber",sharedPreferences.getString("setPlayersNumber","2").toInt())
-        intent.putExtra("vibration",sharedPreferences.getBoolean("setVibration",true))
-        intent.putExtra("startThinkingTime",sharedPreferences.getString("setThinkingTime","60") != "0")
+        val preferenceManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val editor = preferenceManager.edit()
+        editor.putBoolean("startThinkingTime", preferenceManager.getString("thinkingTime", "60") != "0")
+        for (i in 0..6) editor.putInt("timePlayer$i", preferenceManager.getString("playerTime", "60").toInt())
+        editor.putInt("player", 0)
+        editor.apply()
         startActivity(intent)
         finish()
     }
@@ -77,49 +75,49 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             super.onCreate(savedInstanceState)
             addPreferencesFromResource(R.xml.pref_timer)
             setHasOptionsMenu(true)
-            val setTimerMode = findPreference("setTimerMode") as ListPreference
-            val setMoveTime = findPreference("setMoveTime") as EditTextPreference
-            val setPlayerTime = findPreference("setPlayerTime") as EditTextPreference
-            val setThinkingTime = findPreference("setThinkingTime") as EditTextPreference
-            val setPlayersNumber = findPreference("setPlayersNumber") as ListPreference
-            val setVibration = findPreference("setVibration") as SwitchPreference
+            val timerMode = findPreference("timerMode") as ListPreference
+            val moveTime = findPreference("moveTime") as EditTextPreference
+            val playerTime = findPreference("playerTime") as EditTextPreference
+            val thinkingTime = findPreference("thinkingTime") as EditTextPreference
+            val playersNumber = findPreference("playersNumber") as ListPreference
+            val vibration = findPreference("vibration") as SwitchPreference
             val startTimer = findPreference("startTimer")
-            setMoveTime.summary = setMoveTime.text + "秒"
-            setPlayerTime.summary = setPlayerTime.text + "秒"
-            setThinkingTime.summary = setThinkingTime.text + "秒"
+            moveTime.summary = moveTime.text + "秒"
+            playerTime.summary = playerTime.text + "秒"
+            thinkingTime.summary = thinkingTime.text + "秒"
 
-            setMoveTime.isEnabled = setTimerMode.value.toInt() > 0
-            setPlayerTime.isEnabled = setTimerMode.value.toInt() > 1
-            setThinkingTime.isEnabled = setTimerMode.value.toInt() > 0
-            setPlayersNumber.isEnabled = setTimerMode.value.toInt() > 1
-            setVibration.isEnabled = setTimerMode.value.toInt() > 0
-            startTimer.isEnabled = setTimerMode.value.toInt() > 0
+            moveTime.isEnabled = timerMode.value.toInt() > 0
+            playerTime.isEnabled = timerMode.value.toInt() > 1
+            thinkingTime.isEnabled = timerMode.value.toInt() > 0
+            playersNumber.isEnabled = timerMode.value.toInt() > 1
+            vibration.isEnabled = timerMode.value.toInt() > 0
+            startTimer.isEnabled = timerMode.value.toInt() > 0
             
-            setTimerMode.setOnPreferenceChangeListener { _, newValue ->
-                setMoveTime.isEnabled = newValue.toString().toInt() > 0
-                setPlayerTime.isEnabled = newValue.toString().toInt() > 1
-                setThinkingTime.isEnabled = newValue.toString().toInt() > 0
-                setPlayersNumber.isEnabled = newValue.toString().toInt() > 1
-                setVibration.isEnabled = newValue.toString().toInt() > 0
+            timerMode.setOnPreferenceChangeListener { _, newValue ->
+                moveTime.isEnabled = newValue.toString().toInt() > 0
+                playerTime.isEnabled = newValue.toString().toInt() > 1
+                thinkingTime.isEnabled = newValue.toString().toInt() > 0
+                playersNumber.isEnabled = newValue.toString().toInt() > 1
+                vibration.isEnabled = newValue.toString().toInt() > 0
                 startTimer.isEnabled = newValue.toString().toInt() > 0
                 true
             }
 
-            setMoveTime.setOnPreferenceChangeListener { preference, newValue ->
+            moveTime.setOnPreferenceChangeListener { preference, newValue ->
                 if (newValue == "0") false else {
                     preference.summary = newValue.toString() + "秒"
                     true
                 }
             }
 
-            setPlayerTime.setOnPreferenceChangeListener { preference, newValue ->
+            playerTime.setOnPreferenceChangeListener { preference, newValue ->
                 if (newValue == "0") false else {
                     preference.summary = newValue.toString() + "秒"
                     true
                 }
             }
 
-            setThinkingTime.setOnPreferenceChangeListener { preference, newValue ->
+            thinkingTime.setOnPreferenceChangeListener { preference, newValue ->
                 preference.summary = newValue.toString() + "秒"
                 true
             }

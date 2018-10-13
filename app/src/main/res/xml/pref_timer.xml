@@ -5,13 +5,13 @@
         android:defaultValue="0"
         android:entries="@array/timerMode"
         android:entryValues="@array/timerModeValue"
-        android:key="setTimerMode"
+        android:key="timerMode"
         android:summary="%s"
         android:title="タイマーモード" />
     <EditTextPreference
         android:defaultValue="60"
         android:inputType="number"
-        android:key="setMoveTime"
+        android:key="moveTime"
         android:maxLength="4"
         android:numeric="integer"
         android:selectAllOnFocus="true"
@@ -21,7 +21,7 @@
     <EditTextPreference
         android:defaultValue="60"
         android:inputType="number"
-        android:key="setPlayerTime"
+        android:key="playerTime"
         android:maxLength="4"
         android:selectAllOnFocus="true"
         android:singleLine="true"
@@ -30,7 +30,7 @@
     <EditTextPreference
         android:defaultValue="60"
         android:inputType="number"
-        android:key="setThinkingTime"
+        android:key="thinkingTime"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:summary="60秒"
@@ -39,12 +39,12 @@
         android:defaultValue="2"
         android:entries="@array/playersNumber"
         android:entryValues="@array/playersNumberValue"
-        android:key="setPlayersNumber"
+        android:key="playersNumber"
         android:summary="%s"
         android:title="人数" />
     <SwitchPreference
         android:defaultValue="true"
-        android:key="setVibration"
+        android:key="vibration"
         android:summary="残り時間が少なくなると振動します"
         android:title="バイブレーション" />
     <Preference
