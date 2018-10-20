@@ -1,5 +1,7 @@
 package tatyam.me.qkdealerplus
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
@@ -10,6 +12,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigInteger
 import android.content.Intent
 import android.preference.PreferenceManager
+import android.support.v4.content.LocalBroadcastManager
+import android.content.IntentFilter
+
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +33,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val intentFilter = IntentFilter("setPlayer")
+        val broadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if(intent != null) resultText.text = intent.getStringExtra("setText")
+            }
+        }
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter)
+
         findViewById<Button>(R.id.buttonDelete).setOnLongClickListener {
             judged = false
             number = "0"
@@ -33,7 +49,6 @@ class MainActivity : AppCompatActivity() {
             resultText.text = resetText[mode]
             true
         }
-
 
         findViewById<Button>(R.id.buttonJudge).setOnLongClickListener {
             if ("[×=^]".toRegex() in number || numberOfX > 1) return@setOnLongClickListener false

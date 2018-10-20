@@ -1,8 +1,10 @@
 package tatyam.me.qkdealerplus
 
 import android.content.Context
+import android.content.Intent
 import android.os.*
 import android.preference.PreferenceManager
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_timer.*
@@ -135,10 +137,11 @@ class TimerActivity : AppCompatActivity() {
             val editor = sharedPreferences.edit()
             editor.putInt("timePlayer$player", if(timeB.text == "0.0") 0 else timeB.text.toString().toDouble().toInt() + 1)
             editor.apply()
-        }
-        if(timerMode > 1) {
-            val string = "プレイヤー${player + 1} の手番です"
-            resultText.text = string
+            if(timerMode > 1) {
+                val intent = Intent("setPlayer")
+                intent.putExtra("setText", "プレイヤー${player + 1} の手番です")
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+            }
         }
     }
 }

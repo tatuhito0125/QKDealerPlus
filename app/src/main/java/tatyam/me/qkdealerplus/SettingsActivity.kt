@@ -10,6 +10,8 @@ import android.preference.*
 import android.view.MenuItem
 import android.view.View
 
+
+
 /**
  * A [PreferenceActivity] that presents a set of application tings. On
  * handset devices, tings are presented as a single list. On tablets,
@@ -30,7 +32,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         val intent = Intent(this, TimerActivity::class.java)
         val preferenceManager = PreferenceManager.getDefaultSharedPreferences(this)
         val editor = preferenceManager.edit()
-        editor.putBoolean("startThinkingTime", preferenceManager.getString("thinkingTime", "60") != "0")
+        if (preferenceManager.getString("thinkingTime", "60") != "0") editor.putBoolean("startThinkingTime", true)
         for (i in 0..6) editor.putInt("timePlayer$i", preferenceManager.getString("playerTime", "60").toInt())
         editor.putInt("player", 0)
         editor.apply()
