@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private var inputFormat = 1
     private var numberOfX = 0
     private var judged = true
+    private var joker = false
     private var maxFactorX = 2
     var number = "0"
     private val resetText = arrayOf("Press \"●\" to Judge")
@@ -160,6 +161,10 @@ class MainActivity : AppCompatActivity() {
 
     fun pressTimer(view: View){
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (sharedPreferences.getString("timerMode", "0") == "0") {
+            startActivity(Intent(this, SettingsActivity::class.java))
+            return
+        }
         val editor = sharedPreferences.edit()
         if (sharedPreferences.getBoolean("startThinkingTime", false)) {
             editor.putBoolean("startThinkingTime", false)
@@ -173,6 +178,7 @@ class MainActivity : AppCompatActivity() {
 
     fun pressPass(view: View) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (sharedPreferences.getString("timerMode", "0") == "0") return
         val editor = sharedPreferences.edit()
         editor.putInt("player", (sharedPreferences.getInt("player", 0) + 1) % sharedPreferences.getString("playersNumber", "2").toInt())
         editor.apply()
@@ -186,10 +192,13 @@ class MainActivity : AppCompatActivity() {
             number = "0"
             numberOfX = 0
         }
-        val joker = number.lastOrNull() == '('
+        if (joker) number += '('
         number += string
         while ("^0[0-9ATJQKX]|^[×^]".toRegex() in number) number = number.removeRange(0..0)
-        if (joker) number += ')'
+        if (joker) {
+            number += ')'
+            joker = false
+        }
         if (number.isEmpty()) number = "0"
         judgeNumber.text = number
         resultText.text = resetText[mode]
@@ -285,7 +294,10 @@ class MainActivity : AppCompatActivity() {
 
     fun pressAny(view: View) {
         if (mode > 0) {
-            if (number.lastOrNull() != '(') press("X(")
+            if (number.lastOrNull() != '(') {
+                joker = true
+                press("X")
+            }
         } else if (numberOfX < 3) {
             if ('=' in number) {
                 val toast = Toast.makeText(this, "cannot use X in factorization mode", Toast.LENGTH_SHORT)
@@ -347,6 +359,13 @@ class MainActivity : AppCompatActivity() {
             toast.setGravity(Gravity.BOTTOM, 0, 16)
             toast.show()
             return
+        }
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (number in listOf("57", "X") && sharedPreferences.getString("timerMode", "0") != "0"){
+
+            val editor = sharedPreferences.edit()
+            editor.putInt("player", (sharedPreferences.getInt("player", 0) + sharedPreferences.getString("playersNumber", "2").toInt() - 1) % sharedPreferences.getString("playersNumber", "2").toInt())
+            editor.apply()
         }
         if (!cal && numberOfX > 0) resultText.text = "は素数になりません"
         var lastNumberOfX = 0
@@ -410,6 +429,12 @@ class MainActivity : AppCompatActivity() {
         if (n == 0) return if (isPrimeB(cnt)) cnt else 0.toBigInteger()
         if (n == 1) for (i in 0..13) if (list[i] > 0) return permSearch(0, mutableListOf(), connect(cnt, i))
         if (list[1] + list[3] + list[7] + list[9] + list[11] + list[13] == 0) return 0.toBigInteger()
+        var eleven = true
+        for (i in 0..9) if (list[i] != 0) {
+            eleven = false
+            break
+        }
+        if (eleven && ((cnt % 11.toBigInteger()).toInt() - list[10] + list[12] + list[13]) % 11 == 0) return 0.toBigInteger()
         var a = 0.toBigInteger()
         for (i in listOf(9, 8, 7, 6, 5, 4, 3, 2, 19, 18, 17, 16, 15, 14, 13, 12, 1, 10, 0)) {
             if (i == 1) {
@@ -523,6 +548,8 @@ class MainActivity : AppCompatActivity() {
                 when {
                     string == "0" -> "は加法単位元です"
                     string == "1" -> "は乗法単位元です"
+                    string == "57" -> "はグロタンディーク素数です"
+                    string == "1729" -> "はラマヌジャンのタクシー数です"
                     isPrime(string) -> "は素数です"
                     numberOfX == 0 && maxFactorX == 0 -> "は素数ではありません"
                     maxFactorX <= numberOfX -> return
