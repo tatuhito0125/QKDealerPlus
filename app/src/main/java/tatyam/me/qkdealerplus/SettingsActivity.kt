@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.preference.*
+import android.support.v4.content.LocalBroadcastManager
 import android.view.MenuItem
 import android.view.View
 
@@ -28,7 +29,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         super.onCreate(savedInstanceState)
         setupActionBar()
     }
-    fun startTimer(view: View){
+
+    fun startTimer(view: View) {
         val intent = Intent(this, TimerActivity::class.java)
         val preferenceManager = PreferenceManager.getDefaultSharedPreferences(this)
         val editor = preferenceManager.edit()
@@ -39,6 +41,9 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         startActivity(intent)
         finish()
     }
+
+    fun copyBox(view: View) = LocalBroadcastManager.getInstance(this).sendBroadcast(Intent("copyBox"))
+    fun clearBox(view: View) = LocalBroadcastManager.getInstance(this).sendBroadcast(Intent("clearBox"))
 
     /**
      * Set up the [android.app.ActionBar], if the API is available.
@@ -123,6 +128,25 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 preference.summary = newValue.toString() + "秒"
                 true
             }
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            val id = item.itemId
+            if (id == android.R.id.home) {
+                startActivity(Intent(activity, SettingsActivity::class.java))
+                return true
+            }
+            return super.onOptionsItemSelected(item)
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    class SettingsPreferenceFragment : PreferenceFragment() {
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            addPreferencesFromResource(R.xml.pref_timer)
+            setHasOptionsMenu(true)
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

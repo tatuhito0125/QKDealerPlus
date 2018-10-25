@@ -29,4 +29,12 @@
         <item>7</item>
     </string-array>
     <string-array name="start" />
+    <string-array name="sortX">
+        <item>全体の降順</item>
+        <item>それぞれのXにおいて降順</item>
+    </string-array>
+    <string-array name="sortXValue">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
 </resources>

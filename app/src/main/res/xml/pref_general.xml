@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/sortX"
+        android:entryValues="@array/sortXValue"
+        android:key="sortX"
+        android:summary="%s"
+        android:title="まとめて判定時の並べ方" />
+    <Preference
+        android:id="@+id/copyResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="履歴をコピー"
+        android:widgetLayout="@layout/button_copy" />
+    <Preference
+        android:id="@+id/deleteResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="履歴を消去"
+        android:widgetLayout="@layout/button_clear" />
+</PreferenceScreen>

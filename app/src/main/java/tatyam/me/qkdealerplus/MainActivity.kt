@@ -1,7 +1,6 @@
 package tatyam.me.qkdealerplus
 
-import android.content.BroadcastReceiver
-import android.content.Context
+import android.content.*
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
@@ -10,14 +9,8 @@ import android.widget.Button
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigInteger
-import android.content.Intent
 import android.preference.PreferenceManager
 import android.support.v4.content.LocalBroadcastManager
-import android.content.IntentFilter
-
-
-
-
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,7 +30,11 @@ class MainActivity : AppCompatActivity() {
         val intentFilter = IntentFilter("setPlayer")
         val broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if(intent != null) resultText.text = intent.getStringExtra("setText")
+                when (intent?.action) {
+                    "setText" -> resultText.text = intent.getStringExtra("setText")
+                    "copyBox" -> (context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip = ClipData.newPlainText("QK++Copy", resultBox.text)
+                    "clearBox" -> resultBox.text = ""
+                }
             }
         }
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter)
@@ -293,6 +290,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun pressAny(view: View) {
+        if (judged) {
+            judged = false
+            number = "0"
+            numberOfX = 0
+        }
         if (mode > 0) {
             if (number.lastOrNull() != '(') {
                 joker = true
@@ -380,6 +382,7 @@ class MainActivity : AppCompatActivity() {
         }
         val string = number.replace('A', '1').replace("T", "10")
                 .replace("J", "11").replace("Q", "12").replace("K", "13")
+        val sortX = sharedPreferences.getString("sortX", "0") == "0"
         when (numberOfX) {
             1 -> {
                 for (i in 0..13) {
@@ -396,16 +399,22 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             2 -> {
+                val primes = mutableListOf<BigInteger>()
                 for (i in 0..13) for (j in 0..13) {
                     var rpString = string.replaceFirst("X", i.toString()).replaceFirst("X", j.toString())
                     if (lastNumberOfX > 0 && j == 0) {
                         rpString = rpString.dropLast(1)
                         if (lastNumberOfX > 1 && i == 0) rpString = rpString.dropLast(1)
                     }
-                    judge(rpString)
+                    if (isPrime(rpString)) {
+                        if (sortX) primes.add(rpString.toBigInteger())
+                        else printResult(rpString, "は素数です")
+                    }
                 }
+                if (sortX) for (i in primes.sorted()) printResult(i.toString(), "は素数です")
             }
             3 -> {
+                val primes = mutableListOf<BigInteger>()
                 for (i in 0..13) for (j in 0..13) for (k in 0..13) {
                     var rpString = string.replaceFirst("X", i.toString()).replaceFirst("X", j.toString()).replaceFirst("X", k.toString())
                     if (lastNumberOfX > 0 && k == 0) {
@@ -415,8 +424,12 @@ class MainActivity : AppCompatActivity() {
                             if (lastNumberOfX > 2 && i == 0) rpString = rpString.dropLast(1)
                         }
                     }
-                    judge(rpString)
+                    if (isPrime(rpString)) {
+                        if (sortX) primes.add(rpString.toBigInteger())
+                        else printResult(rpString, "は素数です")
+                    }
                 }
+                if (sortX) for (i in primes.sorted()) printResult(i.toString(), "は素数です")
             }
             else -> {
                 if (cal) calculate(string)
@@ -627,12 +640,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun isPrimeB(bigint: BigInteger): Boolean {
         if (bigint < 2.toBigInteger()) return false
-        val primes = listOf(2, 3, 5, 7, 11, 13, 17, 19)
+        val primes = listOf(2, 3, 5, 7, 11, 13 )
         for (i in primes) {
             if (bigint < (i * i).toBigInteger()) return true
             if (bigint % i.toBigInteger() == 0.toBigInteger()) return false
         }
-        return bigint.isProbablePrime(200)
+        return bigint.isProbablePrime(100)
     }
 
     private fun log10(b: BigInteger): Double {
