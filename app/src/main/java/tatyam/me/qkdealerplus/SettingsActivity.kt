@@ -1,6 +1,7 @@
 package tatyam.me.qkdealerplus
 
 import android.annotation.TargetApi
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -73,7 +74,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
      */
     override fun isValidFragment(fragmentName: String): Boolean {
         return PreferenceFragment::class.java.name == fragmentName
-                || TimerPreferenceFragment::class.java.name == fragmentName
+                || TimerPreferenceFragment::class.java.name == fragmentName || SettingsPreferenceFragment::class.java.name == fragmentName
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -145,7 +146,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            addPreferencesFromResource(R.xml.pref_timer)
+            addPreferencesFromResource(R.xml.pref_general)
             setHasOptionsMenu(true)
         }
 
@@ -156,6 +157,11 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 return true
             }
             return super.onOptionsItemSelected(item)
+        }
+
+        override fun onDestroy() {
+            super.onDestroy()
+            LocalBroadcastManager.getInstance().sendBroadcast(Intent("copyBox"))
         }
     }
 

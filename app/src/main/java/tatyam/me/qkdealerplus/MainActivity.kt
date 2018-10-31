@@ -27,17 +27,30 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val intentFilter = IntentFilter("setPlayer")
         val broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
-                    "setText" -> resultText.text = intent.getStringExtra("setText")
-                    "copyBox" -> (context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip = ClipData.newPlainText("QK++Copy", resultBox.text)
-                    "clearBox" -> resultBox.text = ""
+                    "setPlayer" -> resultText.text = intent.getStringExtra("setText")
+                    "copyBox" -> {
+                        (context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip = ClipData.newPlainText("QK++Copy", resultBox.text)
+                        val toast = Toast.makeText(this@MainActivity, "copied!", Toast.LENGTH_SHORT)
+                        toast.setGravity(Gravity.BOTTOM, 0, 16)
+                        toast.show()
+                    }
+                    "clearBox" -> {
+                        resultBox.text = ""
+                        val toast = Toast.makeText(this@MainActivity, "deleted!", Toast.LENGTH_SHORT)
+                        toast.setGravity(Gravity.BOTTOM, 0, 16)
+                        toast.show()
+                    }
+                    "showResultBox" -> resultBox.visibility = if(intent.getBooleanExtra( "showResultBox", true)) View.VISIBLE else View.INVISIBLE
                 }
             }
         }
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter)
+        val localBroadcastManager = LocalBroadcastManager.getInstance(this)
+        localBroadcastManager.registerReceiver(broadcastReceiver, IntentFilter("setPlayer"))
+        localBroadcastManager.registerReceiver(broadcastReceiver, IntentFilter("copyBox"))
+        localBroadcastManager.registerReceiver(broadcastReceiver, IntentFilter("clearBox"))
 
         findViewById<Button>(R.id.buttonDelete).setOnLongClickListener {
             judged = false

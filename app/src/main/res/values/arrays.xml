@@ -30,7 +30,7 @@
     </string-array>
     <string-array name="start" />
     <string-array name="sortX">
-        <item>全体の降順</item>
+        <item>全体で降順</item>
         <item>それぞれのXにおいて降順</item>
     </string-array>
     <string-array name="sortXValue">

@@ -8,6 +8,10 @@
         android:key="sortX"
         android:summary="%s"
         android:title="まとめて判定時の並べ方" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="showResultBox"
+        android:title="履歴を表示" />
     <Preference
         android:id="@+id/copyResult"
         android:layout_width="wrap_content"
