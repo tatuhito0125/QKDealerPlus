@@ -1,6 +1,7 @@
 package tatyam.me.qkdealerplus
 
 import android.content.*
+import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
@@ -11,7 +12,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigInteger
 import android.preference.PreferenceManager
 import android.support.v4.content.LocalBroadcastManager
-
+import android.view.ViewGroup
+import android.widget.LinearLayout
 
 class MainActivity : AppCompatActivity() {
     private var mode = 0
@@ -26,6 +28,40 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if (this.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE) {
+            judgeNumber.textSize = 46F
+            resultText.textSize = 24F
+            resultBox.textSize = 17F
+            button0.textSize = 30F
+            button1.textSize = 30F
+            button2.textSize = 30F
+            button3.textSize = 30F
+            button4.textSize = 30F
+            button5.textSize = 30F
+            button6.textSize = 30F
+            button7.textSize = 30F
+            button8.textSize = 30F
+            button9.textSize = 30F
+            button10.textSize = 28F
+            button11.textSize = 28F
+            button12.textSize = 28F
+            button13.textSize = 28F
+            buttonMulti.textSize = 32F
+            buttonPow.textSize = 32F
+            buttonAny.textSize = 28F
+            buttonSetting.layoutParams.height = 128
+            buttonTimer.layoutParams.height = 128
+            buttonFactoring.layoutParams.height = 128
+            buttonDraw.layoutParams.height = 128
+            buttonPass.layoutParams.height = 128
+            buttonSetting.layoutParams.width = 128
+            buttonTimer.layoutParams.width = 128
+            buttonFactoring.layoutParams.width = 128
+            buttonDraw.layoutParams.width = 128
+            buttonPass.layoutParams.width = 128
+        }
+
 
         val broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -51,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         localBroadcastManager.registerReceiver(broadcastReceiver, IntentFilter("setPlayer"))
         localBroadcastManager.registerReceiver(broadcastReceiver, IntentFilter("copyBox"))
         localBroadcastManager.registerReceiver(broadcastReceiver, IntentFilter("clearBox"))
+        localBroadcastManager.registerReceiver(broadcastReceiver, IntentFilter("showResultBox"))
 
         findViewById<Button>(R.id.buttonDelete).setOnLongClickListener {
             judged = false
@@ -62,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.buttonJudge).setOnLongClickListener {
-            if ("[×=^]".toRegex() in number || numberOfX > 1) return@setOnLongClickListener false
+            if ("[×=^]".toRegex() in number || numberOfX > 1 || mode > 0) return@setOnLongClickListener false
             judged = true
             val cards = mutableListOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
             for (char in number) cards[ATJQKX(char)]++

@@ -1,7 +1,6 @@
 package tatyam.me.qkdealerplus
 
 import android.annotation.TargetApi
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -11,7 +10,6 @@ import android.preference.*
 import android.support.v4.content.LocalBroadcastManager
 import android.view.MenuItem
 import android.view.View
-
 
 
 /**
@@ -25,7 +23,7 @@ import android.view.View
  * for more information on developing a tings UI.
  */
 class SettingsActivity : AppCompatPreferenceActivity() {
-
+    private lateinit var localBroadcastManager: LocalBroadcastManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupActionBar()
@@ -140,14 +138,19 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             return super.onOptionsItemSelected(item)
         }
     }
-
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     class SettingsPreferenceFragment : PreferenceFragment() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            addPreferencesFromResource(R.xml.pref_general)
+            addPreferencesFromResource(R.xml.pref_settings)
             setHasOptionsMenu(true)
+            findPreference("showResultBox").setOnPreferenceChangeListener { _, newValue ->
+                val intent = Intent("showResultBox")
+                intent.putExtra("showResultBox", newValue as Boolean)
+                LocalBroadcastManager.getInstance(activity).sendBroadcast(intent)
+                true
+            }
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -157,11 +160,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 return true
             }
             return super.onOptionsItemSelected(item)
-        }
-
-        override fun onDestroy() {
-            super.onDestroy()
-            LocalBroadcastManager.getInstance().sendBroadcast(Intent("copyBox"))
         }
     }
 

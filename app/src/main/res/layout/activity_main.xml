@@ -136,12 +136,9 @@
         android:id="@+id/buttonDelete"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/border_red"
+        android:background="@drawable/button_delete"
         android:longClickable="true"
         android:onClick="pressDelete"
-        android:text="◀︎"
-        android:textColor="#fff"
-        android:textSize="29sp"
         app:layout_constraintBottom_toTopOf="@+id/buttonJudge"
         app:layout_constraintDimensionRatio="1.0"
         app:layout_constraintEnd_toEndOf="parent"
@@ -208,11 +205,8 @@
         android:id="@+id/buttonJudge"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/border_red"
+        android:background="@drawable/button_judge"
         android:onClick="pressJudge"
-        android:text="●"
-        android:textColor="#fff"
-        android:textSize="31sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="2:3"
         app:layout_constraintEnd_toEndOf="parent"
@@ -332,10 +326,7 @@
         android:id="@+id/buttonDraw"
         android:layout_width="52dp"
         android:layout_height="52dp"
-        android:background="@drawable/border"
-        android:text="🃏"
-        android:textColor="#60a"
-        android:textSize="22sp"
+        android:background="@drawable/button_draw"
         app:layout_constraintBottom_toTopOf="@+id/buttonPass"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -343,11 +334,8 @@
         android:id="@+id/buttonTimer"
         android:layout_width="52dp"
         android:layout_height="52dp"
-        android:background="@drawable/border"
+        android:background="@drawable/button_timer"
         android:onClick="pressTimer"
-        android:text="⏰"
-        android:textColor="#b50"
-        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/buttonFactoring"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -357,8 +345,6 @@
         android:layout_height="52dp"
         android:background="@drawable/button_pass"
         android:onClick="pressPass"
-        android:textColor="#682"
-        android:textSize="19sp"
         app:layout_constraintBottom_toTopOf="@+id/buttonAny"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -368,8 +354,6 @@
         android:layout_height="52dp"
         android:background="@drawable/button_setting"
         android:onClick="pressSetting"
-        android:textColor="#555"
-        android:textSize="23sp"
         app:layout_constraintBottom_toTopOf="@+id/buttonTimer"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -377,12 +361,8 @@
         android:id="@+id/buttonFactoring"
         android:layout_width="52dp"
         android:layout_height="52dp"
-        android:background="@drawable/border"
+        android:background="@drawable/button_factoring"
         android:onClick="pressFactoring"
-        android:text="= ×"
-        android:textAllCaps="false"
-        android:textColor="#049"
-        android:textSize="21sp"
         app:layout_constraintBottom_toTopOf="@+id/buttonDraw"
         app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>

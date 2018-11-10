@@ -2,6 +2,7 @@ package tatyam.me.qkdealerplus
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.*
 import android.preference.PreferenceManager
 import android.support.v4.content.LocalBroadcastManager
@@ -22,6 +23,8 @@ class TimerActivity : AppCompatActivity() {
     private var vibration = true
     private var startThinkingTime = false
     private var player = 0
+    private var bigSize = 120F
+    private var smallSize = 60F
     private var timer1: CountDownTimer? = null
     private var timer2: CountDownTimer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +39,10 @@ class TimerActivity : AppCompatActivity() {
         thinkingTime = sharedPreferences.getString("thinkingTime", "60").toInt()
         vibration = sharedPreferences.getBoolean("vibration", true)
         startThinkingTime = sharedPreferences.getBoolean("startThinkingTime", false)
+        if (this.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE) {
+            bigSize = 160F
+            smallSize = 80F
+        }
         val string = moveTime.toString() + ".0"
         timeA.text = string
         val holder = playerTime.toString() + ".0"
@@ -52,7 +59,7 @@ class TimerActivity : AppCompatActivity() {
                 }
             }
             textPlayer.text = "シンキングタイムです"
-            timeA.textSize = 120F
+            timeA.textSize = bigSize
             timeB.textSize = 0F
             timerMode = 1
             timer1!!.start()
@@ -72,7 +79,7 @@ class TimerActivity : AppCompatActivity() {
                         }
                     }
                     textPlayer.text = ""
-                    timeA.textSize = 120F
+                    timeA.textSize = bigSize
                     timeB.textSize = 0F
                     timer1!!.start()
                 }
@@ -99,13 +106,13 @@ class TimerActivity : AppCompatActivity() {
                                 }
                             }
                             timeA.text = "0.0"
-                            timeA.textSize = 60F
-                            timeB.textSize = 120F
+                            timeA.textSize = smallSize
+                            timeB.textSize = bigSize
                             timer2!!.start()
                         }
                     }
-                    timeA.textSize = 120F
-                    timeB.textSize = 60F
+                    timeA.textSize = bigSize
+                    timeB.textSize = smallSize
                     timer1!!.start()
                 }
                 3 -> {
@@ -127,13 +134,13 @@ class TimerActivity : AppCompatActivity() {
                                 }
                             }
                             timeB.text = "0.0"
-                            timeA.textSize = 120F
-                            timeB.textSize = 60F
+                            timeA.textSize = bigSize
+                            timeB.textSize = smallSize
                             timer2!!.start()
                         }
                     }
-                    timeA.textSize = 60F
-                    timeB.textSize = 120F
+                    timeA.textSize = smallSize
+                    timeB.textSize = bigSize
                     timer1!!.start()
                 }
             }
