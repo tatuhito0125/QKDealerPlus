@@ -1,7 +1,6 @@
 package tatyam.me.qkdealerplus
 
 import android.content.*
-import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
@@ -12,8 +11,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigInteger
 import android.preference.PreferenceManager
 import android.support.v4.content.LocalBroadcastManager
-import android.view.ViewGroup
-import android.widget.LinearLayout
+
+
 
 class MainActivity : AppCompatActivity() {
     private var mode = 0
@@ -28,39 +27,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        if (this.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE) {
-            judgeNumber.textSize = 46F
-            resultText.textSize = 24F
-            resultBox.textSize = 17F
-            button0.textSize = 30F
-            button1.textSize = 30F
-            button2.textSize = 30F
-            button3.textSize = 30F
-            button4.textSize = 30F
-            button5.textSize = 30F
-            button6.textSize = 30F
-            button7.textSize = 30F
-            button8.textSize = 30F
-            button9.textSize = 30F
-            button10.textSize = 28F
-            button11.textSize = 28F
-            button12.textSize = 28F
-            button13.textSize = 28F
-            buttonMulti.textSize = 32F
-            buttonPow.textSize = 32F
-            buttonAny.textSize = 28F
-            buttonSetting.layoutParams.height = 128
-            buttonTimer.layoutParams.height = 128
-            buttonFactoring.layoutParams.height = 128
-            buttonDraw.layoutParams.height = 128
-            buttonPass.layoutParams.height = 128
-            buttonSetting.layoutParams.width = 128
-            buttonTimer.layoutParams.width = 128
-            buttonFactoring.layoutParams.width = 128
-            buttonDraw.layoutParams.width = 128
-            buttonPass.layoutParams.width = 128
-        }
 
 
         val broadcastReceiver = object : BroadcastReceiver() {
@@ -79,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                         toast.setGravity(Gravity.BOTTOM, 0, 16)
                         toast.show()
                     }
-                    "showResultBox" -> resultBox.visibility = if(intent.getBooleanExtra( "showResultBox", true)) View.VISIBLE else View.INVISIBLE
+                    "showResultBox" -> resultBox.visibility = if (intent.getBooleanExtra("showResultBox", true)) View.VISIBLE else View.INVISIBLE
                 }
             }
         }
@@ -206,7 +172,7 @@ class MainActivity : AppCompatActivity() {
 
     fun pressSetting(view: View) = startActivity(Intent(this, SettingsActivity::class.java))
 
-    fun pressTimer(view: View){
+    fun pressTimer(view: View) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         if (sharedPreferences.getString("timerMode", "0") == "0") {
             startActivity(Intent(this, SettingsActivity::class.java))
@@ -215,8 +181,7 @@ class MainActivity : AppCompatActivity() {
         val editor = sharedPreferences.edit()
         if (sharedPreferences.getBoolean("startThinkingTime", false)) {
             editor.putBoolean("startThinkingTime", false)
-        }
-        else {
+        } else {
             editor.putInt("player", (sharedPreferences.getInt("player", 0) + 1) % sharedPreferences.getString("playersNumber", "2").toInt())
         }
         editor.apply()
@@ -413,7 +378,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        if (number in listOf("57", "X") && sharedPreferences.getString("timerMode", "0") != "0"){
+        if (number in listOf("57", "X") && sharedPreferences.getString("timerMode", "0") != "0") {
 
             val editor = sharedPreferences.edit()
             editor.putInt("player", (sharedPreferences.getInt("player", 0) + sharedPreferences.getString("playersNumber", "2").toInt() - 1) % sharedPreferences.getString("playersNumber", "2").toInt())
@@ -690,7 +655,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun isPrimeB(bigint: BigInteger): Boolean {
         if (bigint < 2.toBigInteger()) return false
-        val primes = listOf(2, 3, 5, 7, 11, 13 )
+        val primes = listOf(2, 3, 5, 7, 11, 13)
         for (i in primes) {
             if (bigint < (i * i).toBigInteger()) return true
             if (bigint % i.toBigInteger() == 0.toBigInteger()) return false
@@ -709,6 +674,7 @@ class MainActivity : AppCompatActivity() {
         return kotlin.math.log10(a.toDouble()) + cnt
     }
 
+    @Suppress("FunctionName")
     private fun ATJQKX(char: Char): Int = when (char) {
         'A' -> 1
         'T' -> 10
@@ -717,5 +683,118 @@ class MainActivity : AppCompatActivity() {
         'K' -> 13
         'X' -> 14
         else -> char - '0'
+    }
+
+    private val multiplier = listOf(1.toBigInteger(), 3.toBigInteger(), 5.toBigInteger(), 7.toBigInteger(), 11.toBigInteger(), 15.toBigInteger(), 21.toBigInteger(), 33.toBigInteger(), 35.toBigInteger(), 55.toBigInteger(), 77.toBigInteger(), 105.toBigInteger(), 165.toBigInteger(), 231.toBigInteger(), 385.toBigInteger(), 1155.toBigInteger())
+    @Suppress("LocalVariableName", "FunctionName")
+    private fun SQUFOF(N: BigInteger, time: Long): BigInteger? {
+        var D: BigInteger
+        var Po: BigInteger
+        var P: BigInteger
+        var Pprev: BigInteger
+        var Q: BigInteger
+        var Qprev: BigInteger
+        var q: BigInteger
+        var b: BigInteger
+        var r: BigInteger
+        var s: BigInteger
+        var L: BigInteger
+        var B: BigInteger
+        var i: BigInteger
+        val start = System.currentTimeMillis()
+        if (isSquare(N)) return sqrt(N)
+        for (k in multiplier) {
+            s = sqrt(N)
+            D = k * N
+            P = sqrt(D)
+            Pprev = P
+            Po = Pprev
+            Qprev = 1.toBigInteger()
+            Q = D - Po * Po
+            L = sqrt(s shl 1) shl 1
+            B = (L shl 1) + L
+            i = 2.toBigInteger()
+            while (i < B) {
+                b = ((Po + P) / Q)
+                P = b * Q - P
+                q = Q
+                Q = Qprev + b * (Pprev - P)
+                if ((i and 1.toBigInteger()) == 1.toBigInteger() && isSquare(Q)) break
+                Qprev = q
+                Pprev = P
+                i++
+            }
+            if (i >= B) continue
+            r = sqrt(Q)
+            b = ((Po - P) / r)
+            P = b * r + P
+            Pprev = P
+            Qprev = r
+            Q = (D - Pprev * Pprev) / Qprev
+            do {
+                b = ((Po + P) / Q)
+                Pprev = P
+                P = b * Q - P
+                q = Q
+                Q = Qprev + b * (Pprev - P)
+                Qprev = q
+            } while (P !== Pprev)
+            r = N.gcd(Qprev)
+            if (r !== 1.toBigInteger() && r !== N) return r
+            if (System.currentTimeMillis() - start > time) return 0.toBigInteger()
+        }
+        return 0.toBigInteger()
+    }
+
+    private fun isSquare(x: BigInteger): Boolean {
+        var list = listOf(0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 33, 68, 105, 185, 228, 17, 113, 164, 217, 73, 132, 193, 65, 201, 89, 241, 145, 57, 233, 161, 97, 41, 249, 209, 177, 153, 137, 129)
+        var sq = (x and 0xff.toBigInteger()).toInt()
+        sq = (sq * sq) and 0xff
+        if (sq !in list) return false
+        var x = x
+        var xint = 0
+        while (x !== 0.toBigInteger()) {
+            xint += (x and 0xffffff.toBigInteger()).toInt()
+            x = x shr 24
+        }
+        xint %= 0xffffff
+        list = listOf(0, 1, 4)
+        sq = xint % 5
+        sq = sq * sq % 5
+        if (sq !in list) return false
+
+        list = listOf(0, 1, 2, 4)
+        sq = xint % 7
+        sq = sq * sq % 7
+        if (sq !in list) return false
+
+        list = listOf(0, 1, 4, 7)
+        sq = xint % 9
+        sq = sq * sq % 9
+        if (sq !in list) return false
+
+        list = listOf(0, 1, 3, 4, 9, 10, 12)
+        sq = xint % 13
+        sq = sq * sq % 13
+        if (sq !in list) return false
+
+        list = listOf(0, 1, 2, 4, 8, 9, 13, 15, 16)
+        sq = xint % 17
+        sq = sq * sq % 17
+        if (sq !in list) return false
+
+        val sqrt = sqrt(x)
+        return sqrt * sqrt === x
+    }
+
+    private fun sqrt(x: BigInteger): BigInteger {
+        var div = BigInteger.ZERO.setBit(x.bitLength() shr 1)
+        var div2 = div
+        while (true) {
+            val y = (div + x / div) shr 1
+            if (y == div || y == div2) return y
+            div2 = div
+            div = y
+        }
     }
 }

@@ -248,7 +248,7 @@
         android:onClick="pressPow"
         android:text="^"
         android:textColor="#fff"
-        android:textSize="24sp"
+        android:textSize="26sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1.2"
         app:layout_constraintEnd_toStartOf="@+id/button13"
