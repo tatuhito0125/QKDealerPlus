@@ -2,6 +2,7 @@ package tatyam.me.qkdealerplus
 
 import android.content.*
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
@@ -12,6 +13,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigInteger
 import android.preference.PreferenceManager
 import android.support.v4.content.LocalBroadcastManager
+import java.util.*
+import kotlin.math.min
 
 class MainActivity : AppCompatActivity() {
     private var mode = 0
@@ -99,7 +102,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.buttonJudge).setOnLongClickListener {
             if ("[×=^]".toRegex() in number || numberOfX > 1 || mode > 0) return@setOnLongClickListener false
             judged = true
-            val cards = mutableListOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            val cards = mutableListOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
             for (char in number) cards[ATJQKX(char)]++
             var searchResult = 0.toBigInteger()
             if (numberOfX > 0) {
@@ -490,72 +493,171 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun permSearch(n: Int, list: MutableList<Int>, cnt: BigInteger = 0.toBigInteger(), one: Boolean = false): BigInteger {
-        if (n == 0) return if (isPrimeB(cnt)) cnt else 0.toBigInteger()
-        if (n == 1) for (i in 0..13) if (list[i] > 0 && (i !in listOf(1, 11) || !one)) return permSearch(0, mutableListOf(), connect(cnt, i))
-        if (list[1] + list[3] + list[7] + list[9] + list[11] + list[13] == 0) return 0.toBigInteger()
+    private fun check(n: Int, list: MutableList<Int>, cnt: String): Boolean {
+        if (n == 0) return true
+        if (list[1] + list[3] + list[7] + list[9] + list[11] + list[13] == 0) return false
         var eleven = true
         for (i in 0..9) if (list[i] != 0) {
             eleven = false
             break
         }
-        if (eleven && ((cnt % 11.toBigInteger()).toInt() - list[10] + list[12] + list[13] * 2) % 11 == 0) return 0.toBigInteger()
-        var a = 0.toBigInteger()
-        for (i in listOf(9, 8, 7, 6, 5, 4, 3, 2, 19, 18, 17, 16, 15, 14, 13, 12, 1, 10, 0)) {
-            if (i == 1) {
-                if (one) continue
-                if (list[11] == 0) {
-                    if (list[1] > 0) {
-                        list[1]--
-                        a = permSearch(n - 1, list, connect(cnt, 1))
-                        list[1]++
-                    }
+        if (eleven) {
+            var eleven = 0
+            var i = cnt.length and 1
+            for (char in cnt) {
+                if (i == 1) eleven += char - '0'
+                else eleven -= char - '0'
+                i = i xor 1
+            }
+            if ((eleven - list[10] + list[12] + list[13] * 2) % 11 == 0) return false
+        }
+        return true
+    }
+
+    private fun permSearch(n: Int, list: MutableList<Int>, cnt: BigInteger = 0.toBigInteger(), one: Boolean = false): BigInteger {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val priorityQueue = PriorityQueue<Triple<Int, MutableList<Int>, String>> { a, b ->
+                for (i in 0 until min(a.third.length, b.third.length)) if (a.third[i] != b.third[i]) return@PriorityQueue b.third[i].toInt() - a.third[i].toInt()
+                return@PriorityQueue a.third.length - b.third.length
+            }
+            priorityQueue.add(Triple(n, list, ""))
+            while (!priorityQueue.isEmpty()) {
+                val (n, list, cnt) = priorityQueue.poll()
+                if (n == 0) {
+                    if (isPrime(cnt)) return cnt.toBigInteger()
+                    continue
                 }
-                else if (list[1] == 0) {
-                    list[11]--
-                    a = permSearch(n - 1, list, connect(cnt, 11))
-                    list[11]++
-                } else {
-                    val one = list[1]
-                    val eleven = list[11]
-                    var i = 0
-                    var cnt = cnt
-                    var n = n
-                    while (list[1] + list[11] != 0) {
-                        if (i == 0) {
-                            list[1]--
-                            n--
-                        }
-                        else {
-                            if (list[11] != 0) {
-                                list[11]--
-                                list[1]++
+                if (list[0] != 0) {
+                    list[0]--
+                    if (check(n - 1, list, cnt + "0")) {
+                        val copy = mutableListOf<Int>()
+                        copy.addAll(list)
+                        priorityQueue.add(Triple(n - 1, copy, cnt + "0"))
+                    }
+                    list[0]++
+                }
+                for (i in 2..10) if (list[i] != 0) {
+                    list[i]--
+                    if (check(n - 1, list, cnt + i.toString())) {
+                        val copy = mutableListOf<Int>()
+                        copy.addAll(list)
+                        priorityQueue.add(Triple(n - 1, copy, cnt + i.toString()))
+                    }
+                    list[i]++
+                }
+                for (i in 12..13) if (list[i] != 0) {
+                    list[i]--
+                    if (check(n - 1, list, cnt + i.toString())) {
+                        val copy = mutableListOf<Int>()
+                        copy.addAll(list)
+                        priorityQueue.add(Triple(n - 1, copy, cnt + i.toString()))
+                    }
+                    list[i]++
+                }
+                if (cnt.lastOrNull() != '1') {
+                    if (list[1] == 0) {
+                        var cnt = cnt
+                        if (list[11] != 0) for (i in 1..list[11]) {
+                            list[11]--
+                            cnt += "11"
+                            if (check(n - i, list, cnt)) {
+                                val copy = mutableListOf<Int>()
+                                copy.addAll(list)
+                                priorityQueue.add(Triple(n - 1, copy, cnt))
                             }
-                            else {
+                        }
+                    } else {
+                        var i = 0
+                        var n = n
+                        var cnt = cnt
+                        while (list[1] + list[11] != 0) {
+                            if (i == 0) {
                                 list[1]--
                                 n--
+                            } else {
+                                if (list[11] != 0) {
+                                    list[11]--
+                                    list[1]++
+                                } else {
+                                    list[1]--
+                                    n--
+                                }
                             }
+                            cnt += "1"
+                            if (check(n, list, cnt)) {
+                                val copy = mutableListOf<Int>()
+                                copy.addAll(list)
+                                priorityQueue.add(Triple(n, copy, cnt))
+                            }
+                            i = i xor 1
                         }
-                        cnt = connect(cnt, 1)
-                        a = max(permSearch(n, list, cnt, true), a)
-                        i = i xor 1
                     }
-                    list[1] = one
-                    list[11] = eleven
                 }
-                if (a != 0.toBigInteger()) return a
-            } else if (i < 14 && list[i] > 0) {
-                list[i]--
-                a = permSearch(n - 1, list, connect(cnt, i))
-                if (a != 0.toBigInteger()) return a
-                list[i]++
-            } else if (i > 9 && list[1] > 0 && list[i - 10] > 0) {
-                list[1]--
-                list[i - 10]--
-                a = permSearch(n - 2, list, connect(cnt, i))
-                if (a != 0.toBigInteger()) return a
-                list[1]++
-                list[i - 10]++
+            }
+        } else {
+            if (n == 0) return if (isPrimeB(cnt)) cnt else 0.toBigInteger()
+            if (n == 1) for (i in 0..13) if (list[i] != 0 && (i !in listOf(1, 11) || !one)) return permSearch(0, mutableListOf(), connect(cnt, i))
+            if (list[1] + list[3] + list[7] + list[9] + list[11] + list[13] == 0) return 0.toBigInteger()
+            var eleven = true
+            for (i in 0..9) if (list[i] != 0) {
+                eleven = false
+                break
+            }
+            if (eleven && ((cnt % 11.toBigInteger()).toInt() - list[10] + list[12] + list[13] * 2) % 11 == 0) return 0.toBigInteger()
+            var a = 0.toBigInteger()
+            for (i in listOf(9, 8, 7, 6, 5, 4, 3, 2, 19, 18, 17, 16, 15, 14, 13, 12, 1, 10, 0)) {
+                if (i == 1) {
+                    if (one) continue
+                    if (list[11] == 0) {
+                        if (list[1] != 0) {
+                            list[1]--
+                            a = permSearch(n - 1, list, connect(cnt, 1))
+                            list[1]++
+                        }
+                    } else if (list[1] == 0) {
+                        list[11]--
+                        a = permSearch(n - 1, list, connect(cnt, 11))
+                        list[11]++
+                    } else {
+                        val one = list[1]
+                        val eleven = list[11]
+                        var i = 0
+                        var cnt = cnt
+                        var n = n
+                        while (list[1] + list[11] != 0) {
+                            if (i == 0) {
+                                list[1]--
+                                n--
+                            } else {
+                                if (list[11] != 0) {
+                                    list[11]--
+                                    list[1]++
+                                } else {
+                                    list[1]--
+                                    n--
+                                }
+                            }
+                            cnt = connect(cnt, 1)
+                            a = max(permSearch(n, list, cnt, true), a)
+                            i = i xor 1
+                        }
+                        list[1] = one
+                        list[11] = eleven
+                    }
+                    if (a != 0.toBigInteger()) return a
+                } else if (i < 14 && list[i] > 0) {
+                    list[i]--
+                    a = permSearch(n - 1, list, connect(cnt, i))
+                    if (a != 0.toBigInteger()) return a
+                    list[i]++
+                } else if (i > 9 && list[1] > 0 && list[i - 10] > 0) {
+                    list[1]--
+                    list[i - 10]--
+                    a = permSearch(n - 2, list, connect(cnt, i))
+                    if (a != 0.toBigInteger()) return a
+                    list[1]++
+                    list[i - 10]++
+                }
             }
         }
         return 0.toBigInteger()
