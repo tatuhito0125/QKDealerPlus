@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigInteger
 import android.preference.PreferenceManager
 import android.support.v4.content.LocalBroadcastManager
+import java.security.SecureRandom
 import java.util.*
 
 
@@ -18,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     private var mode = 0
     private var inputFormat = 1
     private var numberOfX = 0
+    val times = listOf(5000, 500, 50, 5)
     private var judged = true
     private var joker = false
     private var maxFactorX = 2
@@ -594,12 +596,12 @@ class MainActivity : AppCompatActivity() {
             ans += " × "
         }
         ans = ans.dropLast(3)
+        if (factor.second) ans+="(TO)"
         return ans
     }
 
     private fun factor(bigint: BigInteger): Pair<SortedMap<BigInteger, Int>, Boolean> {
         val ans = sortedMapOf<BigInteger, Int>()
-        val times = listOf(5000, 500, 50, 5)
         var bigint = bigint
         val start = System.currentTimeMillis()
         val primes = listOf(2.toBigInteger(), 3.toBigInteger(), 5.toBigInteger(), 7.toBigInteger(), 11.toBigInteger(), 13.toBigInteger(), 17.toBigInteger(), 19.toBigInteger())
@@ -611,15 +613,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
         while (!timeout && bigint > 1.toBigInteger() && !bigint.isProbablePrime(100)) {
-            val squfof = SQUFOF(bigint, times[numberOfX] - System.currentTimeMillis() + start)
-            if (squfof < 2.toBigInteger()) timeout = true
+            val rho = rho(bigint, start)
+            if (rho < 2.toBigInteger()) timeout = true
             else {
-                bigint /= squfof
-                if (squfof.isProbablePrime(100)) ans[squfof] = (ans[squfof] ?: 0) + 1
-                else factor(squfof).first.forEach { ans[it.key] = (ans[it.key] ?: 0) + it.value }
+                bigint /= rho
+                if (rho.isProbablePrime(100)) ans[rho] = (ans[rho] ?: 0) + 1
+                else factor(rho).first.forEach { ans[it.key] = (ans[it.key] ?: 0) + it.value }
             }
         }
-        if (bigint.isProbablePrime(100)) ans[bigint] = (ans[bigint] ?: 0) + 1
+        if (bigint != 1.toBigInteger()) ans[bigint] = (ans[bigint] ?: 0) + 1
         return Pair(ans, timeout)
     }
 
@@ -664,111 +666,24 @@ class MainActivity : AppCompatActivity() {
         else -> char - '0'
     }
 
-    private val multiplier = listOf(1.toBigInteger(), 3.toBigInteger(), 5.toBigInteger(), 7.toBigInteger(), 11.toBigInteger(), 15.toBigInteger(), 21.toBigInteger(), 33.toBigInteger(), 35.toBigInteger(), 55.toBigInteger(), 77.toBigInteger(), 105.toBigInteger(), 165.toBigInteger(), 231.toBigInteger(), 385.toBigInteger(), 1155.toBigInteger())
-    @Suppress("LocalVariableName", "FunctionName")
-    private fun SQUFOF(N: BigInteger, time: Long): BigInteger {
-        var D: BigInteger
-        var Po: BigInteger
-        var P: BigInteger
-        var Pprev: BigInteger
-        var Q: BigInteger
-        var Qprev: BigInteger
-        var q: BigInteger
-        var b: BigInteger
-        var r: BigInteger
-        var s: BigInteger
-        var L: BigInteger
-        var B: BigInteger
-        var i: BigInteger
-        val start = System.currentTimeMillis()
-        if (isSquare(N)) return sqrt(N)
-        for (k in multiplier) {
-            s = sqrt(N)
-            D = k * N
-            P = sqrt(D)
-            Pprev = P
-            Po = Pprev
-            Qprev = 1.toBigInteger()
-            Q = D - Po * Po
-            L = sqrt(s shl 1) shl 1
-            B = (L shl 1) + L
-            i = 2.toBigInteger()
-            while (i < B) {
-                b = ((Po + P) / Q)
-                P = b * Q - P
-                q = Q
-                Q = Qprev + b * (Pprev - P)
-                if ((i and 1.toBigInteger()) == 0.toBigInteger() && isSquare(Q)) break
-                Qprev = q
-                Pprev = P
-                i++
+    private fun rho(N: BigInteger, start: Long): BigInteger {
+        val random = SecureRandom()
+        var divisor: BigInteger
+        var c = BigInteger(N.bitLength(), random)
+        var x = BigInteger(N.bitLength(), random)
+        var xx = x
+        do {
+            x = (x * x + c) % N
+            xx = (xx * xx + c) % N
+            xx = (xx * xx + c) % N
+            divisor = (x - xx).abs().gcd(N)
+            if (x == xx) {
+                c = BigInteger(N.bitLength(), random)
+                x = BigInteger(N.bitLength(), random)
+                xx = x
             }
-            if (i >= B) continue
-            r = sqrt(Q)
-            b = ((Po - P) / r)
-            P = b * r + P
-            Pprev = P
-            Qprev = r
-            Q = (D - Pprev * Pprev) / Qprev
-            do {
-                b = ((Po + P) / Q)
-                Pprev = P
-                P = b * Q - P
-                q = Q
-                Q = Qprev + b * (Pprev - P)
-                Qprev = q
-            } while (P != Pprev)
-            r = N.gcd(Qprev)
-            if (r != 1.toBigInteger() && r != N) return r
-            if (System.currentTimeMillis() - start > time) return 0.toBigInteger()
-        }
-        return 0.toBigInteger()
-    }
-
-    private fun isSquare(x: BigInteger): Boolean {
-        var list = listOf(0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 33, 68, 105, 185, 228, 17, 113, 164, 217, 73, 132, 193, 65, 201, 89, 241, 145, 57, 233, 161, 97, 41, 249, 209, 177, 153, 137, 129)
-        var sq = (x and 0xff.toBigInteger()).toInt()
-        if (sq !in list) return false
-        var x = x
-        var xint = 0
-        while (x != 0.toBigInteger()) {
-            xint += (x and 0xffffff.toBigInteger()).toInt()
-            x = x shr 24
-        }
-        xint %= 0xffffff
-        list = listOf(0, 1, 4)
-        sq = xint % 5
-        if (sq !in list) return false
-
-        list = listOf(0, 1, 2, 4)
-        sq = xint % 7
-        if (sq !in list) return false
-
-        list = listOf(0, 1, 4, 7)
-        sq = xint % 9
-        if (sq !in list) return false
-
-        list = listOf(0, 1, 3, 4, 9, 10, 12)
-        sq = xint % 13
-        if (sq !in list) return false
-
-        list = listOf(0, 1, 2, 4, 8, 9, 13, 15, 16)
-        sq = xint % 17
-        if (sq !in list) return false
-
-        val sqrt = sqrt(x)
-        return sqrt * sqrt == x
-    }
-
-
-    private fun sqrt(n: BigInteger): BigInteger {
-        var a = 1.toBigInteger()
-        var b = (n shr 1) + 2.toBigInteger()
-        while (b >= a) {
-            val mid = (a + b) shr 1
-            if (mid * mid > n) b = mid - 1.toBigInteger()
-            else a = mid + 1.toBigInteger()
-        }
-        return a - 1.toBigInteger()
+            if (System.currentTimeMillis() - start > times[numberOfX]) return 0.toBigInteger()
+        } while (divisor == 1.toBigInteger())
+        return divisor
     }
 }
