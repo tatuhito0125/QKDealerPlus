@@ -12,8 +12,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigInteger
 import android.preference.PreferenceManager
 import android.support.v4.content.LocalBroadcastManager
-import android.view.ViewGroup
-import android.widget.LinearLayout
 
 class MainActivity : AppCompatActivity() {
     private var mode = 0
@@ -119,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                         cards[i]--
                         continue
                     }
-                    searchResult = max(permSearch(number.length, cards, 0.toBigInteger()), searchResult)
+                    searchResult = max(permSearch(number.length, cards), searchResult)
                     cards[i]--
                 }
                 if (searchResult == 0.toBigInteger()) for (i in 9 downTo 0) {
@@ -128,10 +126,14 @@ class MainActivity : AppCompatActivity() {
                         cards[i]--
                         continue
                     }
-                    searchResult = max(permSearch(number.length, cards, 0.toBigInteger()), searchResult)
+                    searchResult = max(permSearch(number.length, cards), searchResult)
                     cards[i]--
                 }
             } else {
+                if (number != "2" && number != "5" && cards[1] + cards[3] + cards[7] + cards[9] + cards[11] + cards[13] == 0) {
+                    printResult(number, "は2または5の倍数です")
+                    return@setOnLongClickListener true
+                }
                 if (number != "3" && (cards[1] + cards[2] * 2 + cards[4] + cards[5] * 2 + cards[7] + cards[8] * 2 + cards[10] + cards[11] * 2 + cards[13]) % 3 == 0) {
                     printResult(number, "は3の倍数です")
                     return@setOnLongClickListener true
@@ -141,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                     printResult(number, "は11の倍数です")
                     return@setOnLongClickListener true
                 }
-                searchResult = permSearch(number.length, cards, 0.toBigInteger())
+                searchResult = permSearch(number.length, cards)
             }
             if (searchResult == 0.toBigInteger()) printResult(number, "は素数になりません")
             else printResult(searchResult.toString(), "は素数です")
@@ -488,32 +490,61 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun permSearch(n: Int, list: MutableList<Int>, cnt: BigInteger): BigInteger {
+    private fun permSearch(n: Int, list: MutableList<Int>, cnt: BigInteger = 0.toBigInteger(), one: Boolean = false): BigInteger {
         if (n == 0) return if (isPrimeB(cnt)) cnt else 0.toBigInteger()
-        if (n == 1) for (i in 0..13) if (list[i] > 0) return permSearch(0, mutableListOf(), connect(cnt, i))
+        if (n == 1) for (i in 0..13) if (list[i] > 0 && (i !in listOf(1, 11) || !one)) return permSearch(0, mutableListOf(), connect(cnt, i))
         if (list[1] + list[3] + list[7] + list[9] + list[11] + list[13] == 0) return 0.toBigInteger()
         var eleven = true
         for (i in 0..9) if (list[i] != 0) {
             eleven = false
             break
         }
-        if (eleven && ((cnt % 11.toBigInteger()).toInt() - list[10] + list[12] + list[13]) % 11 == 0) return 0.toBigInteger()
+        if (eleven && ((cnt % 11.toBigInteger()).toInt() - list[10] + list[12] + list[13] * 2) % 11 == 0) return 0.toBigInteger()
         var a = 0.toBigInteger()
         for (i in listOf(9, 8, 7, 6, 5, 4, 3, 2, 19, 18, 17, 16, 15, 14, 13, 12, 1, 10, 0)) {
             if (i == 1) {
-                if (list[1] > 0) {
-                    list[1]--
-                    a = permSearch(n - 1, list, connect(cnt, 1))
-                    list[1]++
+                if (one) continue
+                if (list[11] == 0) {
+                    if (list[1] > 0) {
+                        list[1]--
+                        a = permSearch(n - 1, list, connect(cnt, 1))
+                        list[1]++
+                    }
                 }
-                if (list[11] > 0) {
+                else if (list[1] == 0) {
                     list[11]--
-                    a = max(permSearch(n - 1, list, connect(cnt, 11)), a)
+                    a = permSearch(n - 1, list, connect(cnt, 11))
                     list[11]++
+                } else {
+                    val one = list[1]
+                    val eleven = list[11]
+                    var i = 0
+                    var cnt = cnt
+                    var n = n
+                    while (list[1] + list[11] != 0) {
+                        if (i == 0) {
+                            list[1]--
+                            n--
+                        }
+                        else {
+                            if (list[11] != 0) {
+                                list[11]--
+                                list[1]++
+                            }
+                            else {
+                                list[1]--
+                                n--
+                            }
+                        }
+                        cnt = connect(cnt, 1)
+                        a = max(permSearch(n, list, cnt, true), a)
+                        i = i xor 1
+                    }
+                    list[1] = one
+                    list[11] = eleven
                 }
                 if (a != 0.toBigInteger()) return a
-            }
-            if (i < 14 && list[i] > 0) {
+            } else if (i < 14 && list[i] > 0) {
                 list[i]--
                 a = permSearch(n - 1, list, connect(cnt, i))
                 if (a != 0.toBigInteger()) return a
