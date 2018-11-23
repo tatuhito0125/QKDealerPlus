@@ -13,13 +13,16 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.math.BigInteger
 import android.preference.PreferenceManager
 import android.support.v4.content.LocalBroadcastManager
-import java.util.*
 import kotlin.math.min
+import java.security.SecureRandom
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
     private var mode = 0
     private var inputFormat = 1
     private var numberOfX = 0
+    val times = listOf(5000, 500, 50, 5)
     private var judged = true
     private var joker = false
     private var maxFactorX = 2
@@ -80,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                         toast.setGravity(Gravity.BOTTOM, 0, 16)
                         toast.show()
                     }
-                    "showResultBox" -> resultBox.visibility = if(intent.getBooleanExtra( "showResultBox", true)) View.VISIBLE else View.INVISIBLE
+                    "showResultBox" -> resultBox.visibility = if (intent.getBooleanExtra("showResultBox", true)) View.VISIBLE else View.INVISIBLE
                 }
             }
         }
@@ -211,7 +214,7 @@ class MainActivity : AppCompatActivity() {
 
     fun pressSetting(view: View) = startActivity(Intent(this, SettingsActivity::class.java))
 
-    fun pressTimer(view: View){
+    fun pressTimer(view: View) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         if (sharedPreferences.getString("timerMode", "0") == "0") {
             startActivity(Intent(this, SettingsActivity::class.java))
@@ -220,8 +223,7 @@ class MainActivity : AppCompatActivity() {
         val editor = sharedPreferences.edit()
         if (sharedPreferences.getBoolean("startThinkingTime", false)) {
             editor.putBoolean("startThinkingTime", false)
-        }
-        else {
+        } else {
             editor.putInt("player", (sharedPreferences.getInt("player", 0) + 1) % sharedPreferences.getString("playersNumber", "2").toInt())
         }
         editor.apply()
@@ -418,7 +420,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        if (number in listOf("57", "X") && sharedPreferences.getString("timerMode", "0") != "0"){
+        if (number in listOf("57", "X") && sharedPreferences.getString("timerMode", "0") != "0") {
 
             val editor = sharedPreferences.edit()
             editor.putInt("player", (sharedPreferences.getInt("player", 0) + sharedPreferences.getString("playersNumber", "2").toInt() - 1) % sharedPreferences.getString("playersNumber", "2").toInt())
@@ -749,67 +751,46 @@ class MainActivity : AppCompatActivity() {
                     isPrime(string) -> "は素数です"
                     numberOfX == 0 && maxFactorX == 0 -> "は素数ではありません"
                     maxFactorX <= numberOfX -> return
-                    else -> factor(string)
+                    else -> convertString(factor(string.toBigInteger()))
                 }
         )
     }
 
-    private fun factor(string: String): String {
-        var ans = ""
-        val times = listOf(5000, 500, 50, 5)
-        var bigint = string.toBigInteger()
+    private fun convertString(factor: Pair<SortedMap<BigInteger, Int>, Boolean>): String {
+        var ans = "= "
+        factor.first.forEach {
+            ans += it.key
+            if (it.value > 1) ans += "^" + it.value.toString()
+            ans += " × "
+        }
+        ans = ans.dropLast(3)
+        if (factor.second) ans+="(TO)"
+        return ans
+    }
+
+    private fun factor(bigint: BigInteger): Pair<SortedMap<BigInteger, Int>, Boolean> {
+        val ans = sortedMapOf<BigInteger, Int>()
+        var bigint = bigint
         val start = System.currentTimeMillis()
-        var cnt = 0
-        var i = 2.toBigInteger()
-        while (bigint % i == 0.toBigInteger()) {
-            bigint /= i
-            cnt++
-        }
-        if (cnt > 0) {
-            ans += " × " + i.toString()
-            if (cnt > 1) ans += "^" + cnt.toString()
-        }
-        if (bigint.isProbablePrime(100)) {
-            ans += " × " + bigint.toString()
-            return ans.replaceFirst(" ×", "=")
-        }
-        if (bigint == 1.toBigInteger()) return ans.replaceFirst(" ×", "=")
-        cnt = 0
-        i = 3.toBigInteger()
-        while (bigint % i == 0.toBigInteger()) {
-            bigint /= i
-            cnt++
-        }
-        if (cnt > 0) {
-            ans += " × " + i.toString()
-            if (cnt > 1) ans += "^" + cnt.toString()
-        }
-        if (bigint.isProbablePrime(100)) {
-            ans += " × " + bigint.toString()
-            return ans.replaceFirst(" ×", "=")
-        }
-        if (bigint == 1.toBigInteger()) return ans.replaceFirst(" ×", "=")
-        i = 5.toBigInteger()
-        while (!bigint.isProbablePrime(100)) {
-            cnt = 0
+        val primes = listOf(2.toBigInteger(), 3.toBigInteger(), 5.toBigInteger(), 7.toBigInteger(), 11.toBigInteger(), 13.toBigInteger(), 17.toBigInteger(), 19.toBigInteger())
+        var timeout = false
+        for (i in primes) {
             while (bigint % i == 0.toBigInteger()) {
                 bigint /= i
-                cnt++
+                ans[i] = (ans[i] ?: 0) + 1
             }
-            if (cnt > 0) {
-                ans += " × " + i.toString()
-                if (cnt > 1) ans += "^" + cnt.toString()
-            }
-            if (bigint == 1.toBigInteger()) return ans.replaceFirst(" ×", "=")
-            val end = System.currentTimeMillis()
-            if (end - start > times[numberOfX]) {
-                ans += " × " + bigint.toString() + "(TO)"
-                return ans.replaceFirst(" ×", "=")
-            }
-            i += 4.toBigInteger() - (i % 6.toBigInteger()).shr(1)
         }
-        ans += " × " + bigint.toString()
-        return ans.replaceFirst(" ×", "=")
+        while (!timeout && bigint > 1.toBigInteger() && !bigint.isProbablePrime(100)) {
+            val rho = rho(bigint, start)
+            if (rho < 2.toBigInteger()) timeout = true
+            else {
+                bigint /= rho
+                if (rho.isProbablePrime(100)) ans[rho] = (ans[rho] ?: 0) + 1
+                else factor(rho).first.forEach { ans[it.key] = (ans[it.key] ?: 0) + it.value }
+            }
+        }
+        if (bigint != 1.toBigInteger()) ans[bigint] = (ans[bigint] ?: 0) + 1
+        return Pair(ans, timeout)
     }
 
     private fun printResult(num: String, string: String) {
@@ -823,7 +804,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun isPrimeB(bigint: BigInteger): Boolean {
         if (bigint < 2.toBigInteger()) return false
-        val primes = listOf(2, 3, 5, 7, 11, 13 )
+        val primes = listOf(2, 3, 5, 7, 11, 13)
         for (i in primes) {
             if (bigint < (i * i).toBigInteger()) return true
             if (bigint % i.toBigInteger() == 0.toBigInteger()) return false
@@ -842,6 +823,7 @@ class MainActivity : AppCompatActivity() {
         return kotlin.math.log10(a.toDouble()) + cnt
     }
 
+    @Suppress("FunctionName")
     private fun ATJQKX(char: Char): Int = when (char) {
         'A' -> 1
         'T' -> 10
@@ -850,5 +832,26 @@ class MainActivity : AppCompatActivity() {
         'K' -> 13
         'X' -> 14
         else -> char - '0'
+    }
+
+    private fun rho(N: BigInteger, start: Long): BigInteger {
+        val random = SecureRandom()
+        var divisor: BigInteger
+        var c = BigInteger(N.bitLength(), random)
+        var x = BigInteger(N.bitLength(), random)
+        var xx = x
+        do {
+            x = (x * x + c) % N
+            xx = (xx * xx + c) % N
+            xx = (xx * xx + c) % N
+            divisor = (x - xx).abs().gcd(N)
+            if (x == xx) {
+                c = BigInteger(N.bitLength(), random)
+                x = BigInteger(N.bitLength(), random)
+                xx = x
+            }
+            if (System.currentTimeMillis() - start > times[numberOfX]) return 0.toBigInteger()
+        } while (divisor == 1.toBigInteger())
+        return divisor
     }
 }
