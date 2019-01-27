@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.buttonJudge).setOnLongClickListener {
             if ("[×=^]".toRegex() in number || numberOfX > 1 || mode > 0) return@setOnLongClickListener false
             judged = true
-            val cards = mutableListOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            val cards = mutableListOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
             for (char in number) cards[ATJQKX(char)]++
             var searchResult = 0.toBigInteger()
             if (numberOfX > 0) {
@@ -114,16 +114,16 @@ class MainActivity : AppCompatActivity() {
                 val eleven = if (cards[0] + cards[1] + cards[2] + cards[3] + cards[4] + cards[5] + cards[6] + cards[7] + cards[8] + cards[9] != 0)
                     null else cards[13] * 2 + cards[12] - cards[10]
                 for (i in 13 downTo 10) {
-                    cards[i]++
                     if (number.length > 1 && (three + i) % 3 == 0) {
-                        cards[i]--
                         continue
                     }
                     if (number.length > 1 && eleven != null && (eleven + i) % 11 == 0) {
-                        cards[i]--
                         continue
                     }
-                    searchResult = max(permSearch(number.length, cards), searchResult)
+                    cards[i]++
+                    val copy = mutableListOf<Int>()
+                    copy.addAll(cards)
+                    searchResult = max(permSearch(number.length, copy), searchResult)
                     cards[i]--
                 }
                 if (searchResult == 0.toBigInteger()) for (i in 9 downTo 0) {
@@ -132,7 +132,9 @@ class MainActivity : AppCompatActivity() {
                         cards[i]--
                         continue
                     }
-                    searchResult = max(permSearch(number.length, cards), searchResult)
+                    val copy = mutableListOf<Int>()
+                    copy.addAll(cards)
+                    searchResult = max(permSearch(number.length, copy), searchResult)
                     cards[i]--
                 }
             } else {
@@ -236,7 +238,7 @@ class MainActivity : AppCompatActivity() {
         val editor = sharedPreferences.edit()
         editor.putInt("player", (sharedPreferences.getInt("player", 0) + 1) % sharedPreferences.getString("playersNumber", "2").toInt())
         editor.apply()
-        val string = "プレイヤー${sharedPreferences.getInt("player", 0) + 1} の手番です"
+        val string = "プレイヤー${(sharedPreferences.getInt("player", 0) + 65).toChar()} の手番です"
         resultText.text = string
     }
 
@@ -559,13 +561,15 @@ class MainActivity : AppCompatActivity() {
                 if (cnt.lastOrNull() != '1') {
                     if (list[1] == 0) {
                         var cnt = cnt
-                        if (list[11] != 0) for (i in 1..list[11]) {
+                        var i = 0
+                        if (list[11] != 0) while (list[11] > 0) {
                             list[11]--
+                            i++
                             cnt += "11"
                             if (check(n - i, list, cnt)) {
                                 val copy = mutableListOf<Int>()
                                 copy.addAll(list)
-                                priorityQueue.add(Triple(n - 1, copy, cnt))
+                                priorityQueue.add(Triple(n - i, copy, cnt))
                             }
                         }
                     } else {
@@ -764,7 +768,7 @@ class MainActivity : AppCompatActivity() {
             ans += " × "
         }
         ans = ans.dropLast(3)
-        if (factor.second) ans+="(TO)"
+        if (factor.second) ans += "(TO)"
         return ans
     }
 
@@ -837,7 +841,7 @@ class MainActivity : AppCompatActivity() {
     private fun rho(N: BigInteger, start: Long): BigInteger {
         val random = SecureRandom()
         var divisor: BigInteger
-        var c = BigInteger(N.bitLength(), random)
+        var c = BigInteger(N.bitLength(), random) % N
         var x = BigInteger(N.bitLength(), random)
         var xx = x
         do {
@@ -851,7 +855,7 @@ class MainActivity : AppCompatActivity() {
                 xx = x
             }
             if (System.currentTimeMillis() - start > times[numberOfX]) return 0.toBigInteger()
-        } while (divisor == 1.toBigInteger())
+        } while (divisor == 1.toBigInteger() || divisor == N)
         return divisor
     }
 }

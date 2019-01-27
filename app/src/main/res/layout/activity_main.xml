@@ -16,7 +16,7 @@
         android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/button4"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/button2"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -30,7 +30,7 @@
         android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/button5"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/button3"
         app:layout_constraintStart_toEndOf="@+id/button1" />
 
@@ -44,7 +44,7 @@
         android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/button6"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/button10"
         app:layout_constraintStart_toEndOf="@+id/button2" />
 
@@ -58,7 +58,7 @@
         android:textColor="#fff"
         android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@+id/button11"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/buttonAny"
         app:layout_constraintStart_toEndOf="@+id/button3" />
 
@@ -72,7 +72,7 @@
         android:textColor="#fff"
         android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@+id/buttonDelete"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button10" />
 
@@ -86,7 +86,7 @@
         android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/button7"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/button5"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -100,7 +100,7 @@
         android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/button8"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/button6"
         app:layout_constraintStart_toEndOf="@+id/button4" />
 
@@ -114,7 +114,7 @@
         android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/button9"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/button11"
         app:layout_constraintStart_toEndOf="@+id/button5" />
 
@@ -128,7 +128,7 @@
         android:textColor="#fff"
         android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@+id/button12"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/buttonDelete"
         app:layout_constraintStart_toEndOf="@+id/button6" />
 
@@ -140,7 +140,7 @@
         android:longClickable="true"
         android:onClick="pressDelete"
         app:layout_constraintBottom_toTopOf="@+id/buttonJudge"
-        app:layout_constraintDimensionRatio="1.0"
+        app:layout_constraintDimensionRatio="35:36"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button11"
         tools:longClickable="false" />
@@ -155,7 +155,7 @@
         android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/buttonMulti"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/button8"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -169,7 +169,7 @@
         android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/button0"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/button9"
         app:layout_constraintStart_toEndOf="@+id/button7" />
 
@@ -183,7 +183,7 @@
         android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/buttonPow"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/button12"
         app:layout_constraintStart_toEndOf="@+id/button8" />
 
@@ -197,7 +197,7 @@
         android:textColor="#fff"
         android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@+id/button13"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/buttonJudge"
         app:layout_constraintStart_toEndOf="@+id/button9" />
 
@@ -208,7 +208,7 @@
         android:background="@drawable/button_judge"
         android:onClick="pressJudge"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="2:3"
+        app:layout_constraintDimensionRatio="35:54"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button12" />
 
@@ -222,7 +222,7 @@
         android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/button0"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -236,7 +236,7 @@
         android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/buttonPow"
         app:layout_constraintStart_toEndOf="@+id/buttonMulti" />
 
@@ -250,7 +250,7 @@
         android:textColor="#fff"
         android:textSize="26sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/button13"
         app:layout_constraintStart_toEndOf="@+id/button0" />
 
@@ -264,7 +264,7 @@
         android:textColor="#fff"
         android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintDimensionRatio="7:6"
         app:layout_constraintEnd_toStartOf="@+id/buttonJudge"
         app:layout_constraintStart_toEndOf="@+id/buttonPow" />
 

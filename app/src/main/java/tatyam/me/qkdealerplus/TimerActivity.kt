@@ -64,7 +64,7 @@ class TimerActivity : AppCompatActivity() {
             timerMode = 1
             timer1!!.start()
         } else {
-            val string = "プレイヤー${player + 1} の手番です"
+            val string = "プレイヤー${(player + 65).toChar()} の手番です"
             textPlayer.text = string
             when(timerMode){
                 1 -> {
@@ -157,7 +157,7 @@ class TimerActivity : AppCompatActivity() {
             editor.apply()
             if(timerMode > 1) {
                 val intent = Intent("setPlayer")
-                intent.putExtra("setText", "プレイヤー${player + 1} の手番です")
+                intent.putExtra("setText", "プレイヤー${(player + 65).toChar()} の手番です")
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
             }
         }
