@@ -842,8 +842,8 @@ class MainActivity : AppCompatActivity() {
         val random = SecureRandom()
         var divisor: BigInteger
         var c = BigInteger(N.bitLength(), random) % N
-        var x = BigInteger(N.bitLength(), random)
-        var xx = x
+        var x = 2.toBigInteger()
+        var xx = 2.toBigInteger()
         do {
             x = (x * x + c) % N
             xx = (xx * xx + c) % N
@@ -851,8 +851,8 @@ class MainActivity : AppCompatActivity() {
             divisor = (x - xx).abs().gcd(N)
             if (x == xx) {
                 c = BigInteger(N.bitLength(), random)
-                x = BigInteger(N.bitLength(), random)
-                xx = x
+                x = 2.toBigInteger()
+                xx = 2.toBigInteger()
             }
             if (System.currentTimeMillis() - start > times[numberOfX]) return 0.toBigInteger()
         } while (divisor == 1.toBigInteger() || divisor == N)
