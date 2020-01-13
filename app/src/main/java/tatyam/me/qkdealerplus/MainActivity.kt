@@ -32,41 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        if (this.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE) {
-            judgeNumber.textSize = 46F
-            resultText.textSize = 24F
-            resultBox.textSize = 17F
-            button0.textSize = 30F
-            button1.textSize = 30F
-            button2.textSize = 30F
-            button3.textSize = 30F
-            button4.textSize = 30F
-            button5.textSize = 30F
-            button6.textSize = 30F
-            button7.textSize = 30F
-            button8.textSize = 30F
-            button9.textSize = 30F
-            button10.textSize = 28F
-            button11.textSize = 28F
-            button12.textSize = 28F
-            button13.textSize = 28F
-            buttonMulti.textSize = 32F
-            buttonPow.textSize = 32F
-            buttonAny.textSize = 28F
-            buttonSetting.layoutParams.height = 128
-            buttonTimer.layoutParams.height = 128
-            buttonFactoring.layoutParams.height = 128
-            buttonDraw.layoutParams.height = 128
-            buttonPass.layoutParams.height = 128
-            buttonSetting.layoutParams.width = 128
-            buttonTimer.layoutParams.width = 128
-            buttonFactoring.layoutParams.width = 128
-            buttonDraw.layoutParams.width = 128
-            buttonPass.layoutParams.width = 128
-        }
-
-
+        
         val broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
